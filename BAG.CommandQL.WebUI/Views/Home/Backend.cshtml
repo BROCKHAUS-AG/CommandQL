@@ -1,0 +1,137 @@
+﻿
+@{
+    ViewBag.Title = "Backend";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Backend</h2>
+
+<div class="requests">
+
+</div>
+<div class="ping">
+
+</div>
+
+
+@section scripts{
+    <script>
+        var serverpath = window.location.origin + "/api/commandQL/";
+
+        $(function () {
+
+            
+            var data = {
+                "sender": "backend",
+                "commands": [
+                  {
+                      "name": "GetAllConsultants",
+                      "parameters": [{ 'mandant': 'name' }],
+                      "return": null
+                  }
+                  ,
+                  {
+                      "name": "Ping",
+                      "parameters": [{ 'mandant': 'name' }],
+                      "return": null
+                  }
+                  ,
+                  {
+                      "name": "GetRequests",
+                      "parameters": [],
+                      "return": null
+                  }
+                ]
+            };
+            (function poll() {
+                $.ajax({
+                    url: serverpath,
+                    type: 'POST',
+                    dataType: "json",
+                    data: data,
+                    complete: setTimeout(function () { poll() }, 10000),
+                    timeout: 30000,
+                    success: function (data) {
+                        //Update your dashboard gauge
+                        console.debug(data);
+
+                        $.each(data.commands, function (index, cmd) {
+
+                            var fn = window[cmd.name];
+                            if (typeof fn === 'function') {
+                                if (cmd.return && cmd.return.result) {
+                                    fn(cmd.return.result);
+                                }
+                                else {
+                                    fn(cmd.return);
+                                }
+                            }
+
+                        });
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    }
+                });
+            })();
+
+
+
+
+        });
+
+        function GetRequests(data) {
+
+            var html="";
+            $.each(data.requests, function (index, request) {
+                html += request.name + "<br/>";
+            });
+            $(".requests").html(html);
+            console.log(data);
+        }
+
+
+        function Ping(data) {
+            console.log(data);
+            $(".ping").append(data + "<br/>");
+        }
+
+
+    </script>
+
+    <script>
+        var active = true;
+
+        window.onblur = function (e) {
+            active = false;
+            setTimeout(function () {
+                if (!active) {
+                    $("title").html("Where are you?");
+
+
+                    animate = true;
+                    animateTitle();
+                }
+            }, 0 * 1000);
+        };
+
+        window.onfocus = function (e) {
+            active = true;
+
+            animate = false;
+
+            $("title").html("BROCKHAUS AG");
+
+        };
+
+        var title = "Where are you?  ";
+        var animate = true;
+        var animateTitle = function () {
+            if (animate) {
+                title = title.substring(1, title.length) + title.substring(0, 1);
+                document.title = title;
+                setTimeout("animateTitle()", 1000 / 10);
+            }
+        };
+    </script>
+}

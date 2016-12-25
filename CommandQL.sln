@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAG.CommandQL.WebUI", "BAG.CommandQL.WebUI\BAG.CommandQL.WebUI.csproj", "{D749FB16-3969-4EB9-AF6A-EBE37F69C9E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAG.CommandQL", "BAG.CommandQL\BAG.CommandQL.csproj", "{74D80B28-D04B-45FC-A799-4E45BED69D61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAG.CommandQL.Test", "BAG.CommandQL.Test\BAG.CommandQL.Test.csproj", "{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D749FB16-3969-4EB9-AF6A-EBE37F69C9E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D749FB16-3969-4EB9-AF6A-EBE37F69C9E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D749FB16-3969-4EB9-AF6A-EBE37F69C9E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D749FB16-3969-4EB9-AF6A-EBE37F69C9E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74D80B28-D04B-45FC-A799-4E45BED69D61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74D80B28-D04B-45FC-A799-4E45BED69D61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74D80B28-D04B-45FC-A799-4E45BED69D61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74D80B28-D04B-45FC-A799-4E45BED69D61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
