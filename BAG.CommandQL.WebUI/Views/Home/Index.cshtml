@@ -103,7 +103,7 @@
                   {
                       "name": "setRequest",
                       "parameters": [{
-                              //"mandant": mandant,
+                              "mandant": mandant,
                               "name": name,
                               "category": category,
                               "question": question
@@ -122,12 +122,11 @@
                 type: 'POST',
                 dataType: "json",
                 data: data,
-                //complete: setTimeout(function () { poll() }, 10000),
+                //complete: setTimeout(function () { call() }, 10000),
                 timeout: 30000,
                 success: function (data) {
                     //Update your dashboard gauge
                     console.debug(data);
-
                     $.each(data.commands, function (index, cmd) {
 
                         var fn = window[cmd.name];

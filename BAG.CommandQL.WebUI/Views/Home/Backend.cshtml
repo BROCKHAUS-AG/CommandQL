@@ -81,7 +81,6 @@
         });
 
         function GetRequests(data) {
-
             var html="";
             $.each(data.requests, function (index, request) {
                 html += request.name + "<br/>";
@@ -92,8 +91,8 @@
 
 
         function Ping(data) {
-            console.log(data);
             $(".ping").append(data + "<br/>");
+            console.log(data);
         }
 
 

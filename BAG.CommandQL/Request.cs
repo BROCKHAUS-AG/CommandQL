@@ -1,5 +1,4 @@
-﻿using BAG.CommandQL.Interfaces;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +19,7 @@ namespace BAG.CommandQL
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<BAG.CommandQL.Request>(json);
         }
+
         public bool? ExecuteParallel { get; set; }
 
         public string Sender { get; set; }
@@ -34,6 +34,9 @@ namespace BAG.CommandQL
                 result.Commands.Add(new Command()
                 {
                     Name = cmd.Name,
+#if DEBUG
+                    Parameters = cmd.Parameters,
+#endif
                     Errors = cmd.Errors,
                     Return = cmd.Return
                 });
