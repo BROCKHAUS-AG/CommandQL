@@ -24,18 +24,18 @@ namespace BAG.CommandQL.WebUI.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<BAG.CommandQL.Response> Post(JObject obj)
+        public async Task<ResponseQL> Post(JObject obj)
         {
-            BAG.CommandQL.Request request = BAG.CommandQL.Request.FromJObject(obj);
-            BAG.CommandQL.Response response = null;
+            var request = BAG.CommandQL.RequestQL.FromJObject(obj);
+            ResponseQL response = null;
             if (request != null)
             {
-                var exec = new BAG.CommandQL.Execute.Executer(new CommandQLHandler());
+                var exec = new Execute.Executer(new CommandQLHandler());
                 response = await exec.Execute(request);
             }
             else
             {
-                response = new Response();
+                response = new ResponseQL();
                 response.Errors.Add(new NullReferenceException().ToString());
             }
             return response;

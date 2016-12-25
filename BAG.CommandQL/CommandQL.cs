@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace BAG.CommandQL
 {
-    public class Command
+    public class CommandQL
     {
-        public Command()
+        public CommandQL()
         {
-            Parameters = new List<Parameter>();
+            Parameters = new List<ParameterQL>();
             Errors = new List<string>();
         }
 
@@ -22,7 +22,7 @@ namespace BAG.CommandQL
         /// <summary>
         /// Handler.Method[Name](Parameters)
         /// </summary>
-        public List<Parameter> Parameters { get; set; }
+        public List<ParameterQL> Parameters { get; set; }
         /// <summary>
         /// Return Handler.Method[Name](Parameters)
         /// </summary>

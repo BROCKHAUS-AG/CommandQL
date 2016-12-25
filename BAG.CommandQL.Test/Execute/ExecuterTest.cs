@@ -12,41 +12,63 @@ namespace BAG.CommandQL.Test.Execute
 
 
         [TestMethod]
-        public void TestExecute()
+        public void TestExecuteTwoParameters()
         {
-
-            var request = JsonConvert.DeserializeObject<Request>(
+            var request = JsonConvert.DeserializeObject<RequestQL>(
             "{" +
             "  'commands': [                                               " +
             "    {                                                         " +
-            "      'name': 'Echo',                                         " +
-            "      'parameters': [{'name':'name','counter':3}],            " +
-            "      'return': null                                          " +
-            "    },                                                        " +
-            "    {                                                         " +
-            "      'name': 'EchoString',                                   " +
-            "      'parameters': [{'name':'name','counter':3}],            " +
-            "      'return': null                                          " +
+            "      'name': 'twoParameters',                                   " +
+            "      'parameters': [{'name':'firstname','counter':3},{'name':'lastname','counter':3}],            " +
             "    }                                                         " +
             "  ]                                                           " +
             "}");
             Executer exec = new Executer(new Handler());
-            var result = exec.Execute(request);
+            var result = exec.Execute(request).Result;
 
-            Assert.AreEqual(result.Commands.Count, 2);
-            var cmd1 = result.Commands.FirstOrDefault((c) => c.Name == "Echo");
-            Assert.AreEqual(((Handler.EchoResponse)cmd1.Return).Counter, 3);
-            Assert.AreEqual(((Handler.EchoResponse)cmd1.Return).Name, "name");
-
-            var cmd2 = result.Commands.FirstOrDefault((c) => c.Name == "EchoString");
-            Assert.AreEqual(cmd2.Return, "name");
+            Assert.AreEqual(result.Commands.Count, 1);
+            var cmd1 = result.Commands.FirstOrDefault((c) => c.Name == "twoParameters");
+            Assert.AreEqual(cmd1.Return, "firstname lastname");
         }
 
+        [TestMethod]
+        public void TestExecuteTwoCommands()
+        {
+            var request = JsonConvert.DeserializeObject<RequestQL>(
+            "{" +
+            "  'commands': [                                               " +
+            "    {                                                         " +
+            "      'name': 'echo',                                         " +
+            "      'parameters': [{'name':'first last','counter':3}]       " +
+            "    },                                                        " +
+            "    {                                                         " +
+            "      'name': 'echoString',                                   " +
+            "      'parameters': [{'name':'echo'}]                         " +
+            "    },                                                        " +
+            "    {                                                         " +
+            "      'name': 'twoParameters',                                " +
+            "      'parameters': [{'name':'firstname'},{'name':'lastname'}]" +
+            "    }                                                         " +
+            "  ]                                                           " +
+            "}");
 
+            Executer exec = new Executer(new Handler());
+            var result = exec.Execute(request).Result;
+
+            Assert.AreEqual(result.Commands.Count, 3);
+            var cmd1 = result.Commands.FirstOrDefault((c) => c.Name == "echo");
+            Assert.AreEqual(((Handler.EchoResponse)cmd1.Return).Counter, 3);
+            Assert.AreEqual(((Handler.EchoResponse)cmd1.Return).Name, "first last");
+
+            var cmd2 = result.Commands.FirstOrDefault((c) => c.Name == "echoString");
+            Assert.AreEqual(cmd2.Return, "echo");
+
+            var cmd3 = result.Commands.FirstOrDefault((c) => c.Name == "twoParameters");
+            Assert.AreEqual(cmd3.Return, "firstname lastname");
+        }
 
         public class Handler
         {
-
             public EchoResponse Echo(EchoRequest req)
             {
                 var result = new EchoResponse()
@@ -56,12 +78,14 @@ namespace BAG.CommandQL.Test.Execute
                 };
                 return result;
             }
-
             public string EchoString(EchoRequest req)
             {
                 return req.Name;
             }
-
+            public string TwoParameters(EchoRequest req1, EchoRequest req2)
+            {
+                return req1.Name + " " + req2.Name;
+            }
             public class EchoResponse : EchoRequest { }
             public class EchoRequest
             {

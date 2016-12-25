@@ -18,7 +18,7 @@ namespace BAG.CommandQL.Execute
             this.Handler = handler;
         }
 
-        public async Task<Response> Execute(Request request)
+        public async Task<ResponseQL> Execute(RequestQL request)
         {
             var type = Handler.GetType();
             var methods = type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
@@ -84,7 +84,7 @@ namespace BAG.CommandQL.Execute
         //    return result;
         //}
 
-        public List<object> CreateParameters(List<Parameter> parameters, MethodInfo mi)
+        public List<object> CreateParameters(List<ParameterQL> parameters, MethodInfo mi)
         {
             List<object> result = new List<object>();
             var miAnalyser = new MethodInfoAnalyzer(mi);

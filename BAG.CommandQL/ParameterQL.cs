@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BAG.CommandQL
 {
-    public class Parameter : Dictionary<string, object>
+    public class ParameterQL : Dictionary<string, object>
     {
 
     }

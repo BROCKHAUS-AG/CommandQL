@@ -7,31 +7,31 @@ using System.Threading.Tasks;
 
 namespace BAG.CommandQL
 {
-    public class Request
+    public class RequestQL
     {
-        public Request()
+        public RequestQL()
         {
-            Commands = new List<Command>();
+            Commands = new List<CommandQL>();
         }
 
-        public static Request FromJObject(JObject obj)
+        public static RequestQL FromJObject(JObject obj)
         {
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<BAG.CommandQL.Request>(json);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<BAG.CommandQL.RequestQL>(json);
         }
 
         public bool? ExecuteParallel { get; set; }
 
         public string Sender { get; set; }
 
-        public List<Command> Commands { get; set; }
+        public List<CommandQL> Commands { get; set; }
 
-        public Response CreateResponse()
+        public ResponseQL CreateResponse()
         {
-            var result = new Response();
+            var result = new ResponseQL();
             this.Commands.ForEach((cmd) =>
             {
-                result.Commands.Add(new Command()
+                result.Commands.Add(new CommandQL()
                 {
                     Name = cmd.Name,
 #if DEBUG

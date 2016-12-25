@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace BAG.CommandQL
 {
-    public class Response
+    public class ResponseQL
     {
-        public Response()
+        public ResponseQL()
         {
-            Commands = new List<Command>();
+            Commands = new List<CommandQL>();
             Errors = new List<string>();
         }
 
-        public List<Command> Commands { get; set; }
+        public List<CommandQL> Commands { get; set; }
 
         public List<string> Errors { get; set; }
     }
