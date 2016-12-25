@@ -1,9 +1,0 @@
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\bin\Debug\BAG.CommandQL.Test.dll
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\bin\Debug\BAG.CommandQL.Test.pdb
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\bin\Debug\BAG.CommandQL.dll
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\bin\Debug\Newtonsoft.Json.dll
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\bin\Debug\BAG.CommandQL.pdb
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\bin\Debug\Newtonsoft.Json.xml
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\obj\Debug\BAG.CommandQL.Test.csprojResolveAssemblyReference.cache
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\obj\Debug\BAG.CommandQL.Test.dll
-c:\users\me\onedrive\dokumente\visual studio 2015\Projects\CommandQL\BAG.CommandQL.Test\obj\Debug\BAG.CommandQL.Test.pdb
