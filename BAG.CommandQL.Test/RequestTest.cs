@@ -4,11 +4,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BAG.CommandQL.Test
 {
     [TestClass]
-    public class UnitTest1
+    public class RequestTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void TestFromJObject()
         {
+
         }
     }
 }

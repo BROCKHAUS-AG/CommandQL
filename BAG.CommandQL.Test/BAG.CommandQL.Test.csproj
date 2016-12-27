@@ -57,7 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Execute\ExecuterTest.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="RequestTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

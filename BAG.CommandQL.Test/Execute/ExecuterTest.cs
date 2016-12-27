@@ -10,29 +10,10 @@ namespace BAG.CommandQL.Test.Execute
     public class ExecuterTest
     {
 
+        
 
         [TestMethod]
-        public void TestExecuteTwoParameters()
-        {
-            var request = JsonConvert.DeserializeObject<RequestQL>(
-            "{" +
-            "  'commands': [                                               " +
-            "    {                                                         " +
-            "      'name': 'twoParameters',                                   " +
-            "      'parameters': [{'name':'firstname','counter':3},{'name':'lastname','counter':3}],            " +
-            "    }                                                         " +
-            "  ]                                                           " +
-            "}");
-            Executer exec = new Executer(new Handler());
-            var result = exec.Execute(request).Result;
-
-            Assert.AreEqual(result.Commands.Count, 1);
-            var cmd1 = result.Commands.FirstOrDefault((c) => c.Name == "twoParameters");
-            Assert.AreEqual(cmd1.Return, "firstname lastname");
-        }
-
-        [TestMethod]
-        public void TestExecuteTwoCommands()
+        public void TestExecuteCommands()
         {
             var request = JsonConvert.DeserializeObject<RequestQL>(
             "{" +

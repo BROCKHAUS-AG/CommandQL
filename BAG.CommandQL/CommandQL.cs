@@ -31,5 +31,14 @@ namespace BAG.CommandQL
         /// Exceptions
         /// </summary>
         public List<string> Errors { get; set; }
+
+
+        public string Mandant { get; set; }
+
+        public string Group { get; set; }
+
+        public string User { get; set; }
+
+        public string Channel { get; set; }
     }
 }

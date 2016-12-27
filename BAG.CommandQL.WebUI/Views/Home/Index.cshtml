@@ -25,12 +25,12 @@
     </div>
 </div>
 @section scripts{
+    <script src="~/ViewsScripts/CommandQL.js"></script>
     <script>
         var serverpath = window.location.origin + "/api/commandQL/";
+        var cmdQL = new BAG.CommandQL(window, serverpath);
 
         $(function () {
-
-
             var data = {
                 "commands": [
                   {
@@ -52,38 +52,6 @@
                   }
                 ]
             };
-
-
-            //////(function poll() {
-            ////$.ajax({
-            ////    url: serverpath,
-            ////    type: 'POST',
-            ////    dataType: "json",
-            ////    data: data,
-            ////    complete: setTimeout(function () { poll() }, 10000),
-            ////    timeout: 30000,
-            ////    success: function (data) {
-            ////        //Update your dashboard gauge
-            ////        console.debug(data);
-
-            ////        $.each(data.commands, function (index, cmd) {
-
-            ////            var fn = window[cmd.name];
-            ////            if (typeof fn === 'function') {
-            ////                fn(cmd.return);
-            ////            }
-
-            ////        });
-            ////    },
-            ////    error: function (xhr, textStatus, errorThrown) {
-            ////        console.log(textStatus);
-            ////    }
-            ////});
-            //////})();
-
-
-
-
         });
 
         function setRequestCall() {
@@ -97,52 +65,14 @@
             var mandant = "";
             var group = "";
 
-            var data = {
-                "sender": "frontend",
-                "commands": [
-                  {
-                      "name": "setRequest",
-                      "parameters": [{
-                              "mandant": mandant,
-                              "name": name,
-                              "category": category,
-                              "question": question
-                          }],
-                      "return": null
-                  }
-                ]
-            };
-
-            call(data);
+            cmdQL.invoke("setRequest", [{
+                "mandant": mandant,
+                "name": name,
+                "category": category,
+                "question": question
+            }]);
         }
 
-        function call(data) {
-            $.ajax({
-                url: serverpath,
-                type: 'POST',
-                dataType: "json",
-                data: data,
-                //complete: setTimeout(function () { call() }, 10000),
-                timeout: 30000,
-                success: function (data) {
-                    //Update your dashboard gauge
-                    console.debug(data);
-                    $.each(data.commands, function (index, cmd) {
-
-                        var fn = window[cmd.name];
-                        if (typeof fn === 'function') {
-                            console.debug("call " + cmd.name + " (" + cmd.return + ")");
-                            fn(cmd.return);
-                        }
-
-                    });
-
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    console.log(textStatus);
-                }
-            });
-        }
 
         function setRequest(data) {
             console.log(data);
@@ -160,5 +90,5 @@
 
 
     </script>
-    </script>
+
 }
