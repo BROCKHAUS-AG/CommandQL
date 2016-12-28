@@ -9,6 +9,8 @@ namespace BAG.CommandQL.WebUI.Data
     {
         public Guid Id { get; set; }
 
+        public Guid ChatSessionId { get; set; }
+
         public Guid SenderId { get; set; }
 
         public bool IsFromConsultant { get; set; }

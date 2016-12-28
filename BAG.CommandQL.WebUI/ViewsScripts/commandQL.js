@@ -44,18 +44,43 @@ var BAG;
                 //complete: setTimeout(function () { call() }, this.completeTimeout),
                 timeout: this.timeout,
                 success: function (data) {
-                    //Update your dashboard gauge
+                    //Update
                     console.debug(data);
                     $.each(data.commands, function (index, cmd) {
-                        var fn = that.handler[cmd.name];
-                        if (typeof fn === 'function') {
+                        var fnHandler = that.handler[cmd.name];
+                        if (typeof fnHandler === 'function') {
                             console.debug("call " + cmd.name + " (" + cmd.return + ")");
-                            fn(cmd.return);
+                            //fnHandler(cmd.return);
+                            if (cmd.return && cmd.return.result) {
+                                fnHandler(cmd.return.result);
+                            }
+                            else {
+                                fnHandler(cmd.return);
+                            }
+                        }
+                        else {
+                            console.warn("function " + cmd.name + " not found");
+                        }
+                        var fnOnComplete = that.handler["onComplete"];
+                        if (typeof fnOnComplete === 'function') {
+                            console.debug("call onComplete(data," + cmd.name + ")");
+                            //fnOnComplete(cmd.return, cmd.name);
+                            if (cmd.return && cmd.return.result) {
+                                fnOnComplete(cmd.return.result, cmd.name);
+                            }
+                            else {
+                                fnOnComplete(cmd.return, cmd.name);
+                            }
                         }
                     });
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     console.log(textStatus);
+                    var fnOnError = that.handler["onError"];
+                    if (typeof fnOnError === 'function') {
+                        console.debug("call onError-" + textStatus);
+                        fnOnError(xhr, textStatus, errorThrown);
+                    }
                 }
             });
         };
@@ -69,10 +94,15 @@ var BAG;
         };
         CommandQL.prototype.publish = function (cmd, data) {
             console.log("publish " + cmd);
-            //todo:
+            this.invoke(cmd, data);
         };
         CommandQL.prototype.unsubscribe = function (cmd) {
-            return "unsubscribe " + cmd;
+            console.log("unsubscribe " + cmd);
+            for (var i = this.commands.length - 1; i >= 0; i--) {
+                if (this.commands[i].name === cmd) {
+                    this.commands.splice(i, 1);
+                }
+            }
         };
         CommandQL.prototype.connect = function () {
             this.status = Status.Connected;
@@ -82,8 +112,9 @@ var BAG;
             this.status = Status.Disconnected;
             return "disconnect";
         };
-        CommandQL.prototype.pull = function () {
+        CommandQL.prototype.poll = function () {
             var _this = this;
+            var that = this;
             if (this.status == Status.None) {
                 console.log("don't call pull before connect.");
                 return 400;
@@ -96,7 +127,7 @@ var BAG;
                 "sender": this.sender,
                 "commands": [this.commands]
             };
-            var completeFunction = function () { return setTimeout(function () { this.pull(); }, _this.completeTimeout); };
+            var completeFunction = function () { return setTimeout(function () { that.poll(); }, _this.completeTimeout); };
             $.ajax({
                 url: this.serverpath,
                 type: 'POST',
@@ -105,23 +136,49 @@ var BAG;
                 timeout: this.timeout,
                 complete: completeFunction,
                 success: function (data) {
-                    //Update your dashboard gauge
+                    //Update
                     console.debug(data);
                     $.each(data.commands, function (index, cmd) {
-                        var fn = this.handler[cmd.name];
-                        if (typeof fn === 'function') {
+                        var fnHandler = that.handler[cmd.name];
+                        if (typeof fnHandler === 'function') {
                             console.debug("call " + cmd.name + " (" + cmd.return + ")");
-                            fn(cmd.return);
+                            //fnHandler(cmd.return);
+                            if (cmd.return && cmd.return.result) {
+                                fnHandler(cmd.return.result);
+                            }
+                            else {
+                                fnHandler(cmd.return);
+                            }
+                        }
+                        else {
+                            console.warn("function " + cmd.name + " not found");
+                        }
+                        var fnOnComplete = that.handler["onComplete"];
+                        if (typeof fnOnComplete === 'function') {
+                            console.debug("call onComplete(data," + cmd.name + ")");
+                            //fnOnComplete(cmd.return, cmd.name);
+                            if (cmd.return && cmd.return.result) {
+                                fnOnComplete(cmd.return.result, cmd.name);
+                            }
+                            else {
+                                fnOnComplete(cmd.return, cmd.name);
+                            }
                         }
                     });
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     console.log(textStatus);
+                    var fnOnError = that.handler["onError"];
+                    if (typeof fnOnError === 'function') {
+                        console.debug("call onError-" + textStatus);
+                        fnOnError(xhr, textStatus, errorThrown);
+                    }
                 }
             });
+            return 200;
         };
         return CommandQL;
     })();
     BAG.CommandQL = CommandQL;
 })(BAG || (BAG = {}));
-//# sourceMappingURL=commandQL.js.map
+//# sourceMappingURL=CommandQL.js.map

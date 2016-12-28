@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,16 @@ namespace BAG.CommandQL
             Errors = new List<string>();
         }
 
+        
         public List<CommandQL> Commands { get; set; }
 
+        
         public List<string> Errors { get; set; }
     }
+
+    //[JsonArray]
+    //public class ListCommandQL: List<CommandQL> { }
+
+    //[JsonArray]
+    //public class ListString : List<string> { }
 }

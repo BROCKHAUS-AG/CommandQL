@@ -2,90 +2,82 @@
 @{
     ViewBag.Title = "Backend";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var applicationUserId = Guid.Parse("14c1aeac-e911-4837-8fca-5b3264c819e9");
 }
 
-<h2>Backend</h2>
+<h2>Backend:@applicationUserId.ToString()</h2>
 
-<div class="requests">
+<div class="chatRequests">
+    Requests:<br/>
+</div>
 
+<div class="chatSessions">
+    ChatSessions:<br />
+</div>
+<div class="chatMessages">
+    Messages:<br />
 </div>
 <div class="ping">
+    Ping:<br />
 
 </div>
 
 
 @section scripts{
+
+    <script src="~/ViewsScripts/CommandQL.js"></script>
     <script>
+        var applicationUserId = "@applicationUserId.ToString()";
+
         var serverpath = window.location.origin + "/api/commandQL/";
+        var cmdQL = new BAG.CommandQL(window, serverpath);
+        cmdQL.sender = "backend";
 
         $(function () {
-
-            
-            var data = {
-                "sender": "backend",
-                "commands": [
-                  {
-                      "name": "GetAllConsultants",
-                      "parameters": [{ 'mandant': 'name' }],
-                      "return": null
-                  }
-                  ,
-                  {
-                      "name": "Ping",
-                      "parameters": [{ 'mandant': 'name' }],
-                      "return": null
-                  }
-                  ,
-                  {
-                      "name": "GetRequests",
-                      "parameters": [],
-                      "return": null
-                  }
-                ]
-            };
-            (function poll() {
-                $.ajax({
-                    url: serverpath,
-                    type: 'POST',
-                    dataType: "json",
-                    data: data,
-                    complete: setTimeout(function () { poll() }, 10000),
-                    timeout: 30000,
-                    success: function (data) {
-                        //Update your dashboard gauge
-                        console.debug(data);
-
-                        $.each(data.commands, function (index, cmd) {
-
-                            var fn = window[cmd.name];
-                            if (typeof fn === 'function') {
-                                if (cmd.return && cmd.return.result) {
-                                    fn(cmd.return.result);
-                                }
-                                else {
-                                    fn(cmd.return);
-                                }
-                            }
-
-                        });
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.log(textStatus);
-                    }
-                });
-            })();
-
-
-
-
+            cmdQL.subscribe("GetAllConsultants", [{ 'mandant': 'name' }]);
+            cmdQL.subscribe("Ping", []);
+            cmdQL.subscribe("GetChatRequests", [{ "applicationUserId": applicationUserId }]);
+            cmdQL.subscribe("GetChatSessions", [{ "applicationUserId": applicationUserId }]);
+            cmdQL.subscribe("GetChatMessages", [{ "applicationUserId": applicationUserId }]);
+            cmdQL.connect();
+            cmdQL.poll();
         });
 
-        function GetRequests(data) {
-            var html="";
-            $.each(data.requests, function (index, request) {
-                html += request.name + "<br/>";
+        function callSetChatSession(id) {
+            cmdQL.invoke("SetChatSession", [{ "chatRequestId": id, "applicationUserId": applicationUserId }]);
+        }
+        function callSetMessage(msg) {
+            cmdQL.invoke("SetChatMessage", [{ "id": id }]);
+        }
+        function GetChatSessions(data) {
+            if (!data)
+                return;
+            var html = "";
+            $.each(data.chatSessions, function (index, element) {
+                html += element.name + '<br/>';
             });
-            $(".requests").html(html);
+            $(".chatSessions").html(html);
+            console.log(data);
+        }
+        function GetChatMessages(data) {
+            if (!data)
+                return;
+            var html = "";
+            $.each(data.chatMessages, function (index, element) {
+                html += element.mesage + '<br/><br/>';
+            });
+            $(".chatMessages").html(html);
+            console.log(data);
+        }
+        function GetChatRequests(data) {
+            if (!data)
+                return;
+            var html = "";
+            $.each(data.requests, function (index, element) {
+                html += '<a onclick="callSetChatSession(\'' + element.id + '\');return false;">' + element.name + ' - accept</a><br/>';
+            });
+            $(".chatRequests").html(html);
             console.log(data);
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.Owin;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,40 +13,119 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
 
     public class CommandQLHandler
     {
-
-        public GetAllConsultantsResponse GetAllConsultants(GetAllConsultantsRequest req)
+        public GetConsultantsResponse GetConsultants(GetConsultantsRequest req)
         {
-            GetAllConsultantsResponse result = new GetAllConsultantsResponse();
-            result.Users.Add(new User() { Name = "Name" });
+            GetConsultantsResponse result = new GetConsultantsResponse();
+
+            result.Users.Add(new ApplicationUser() { Name = "Matthias" });
+            result.Users.Add(new ApplicationUser() { Name = "Guido" });
+            result.Users.Add(new ApplicationUser() { Name = "Paul" });
+
             return result;
         }
 
         public async Task<string> Ping(PingRequest req)
         {
-            return DateTime.Now.ToString();
+            return await Task.FromResult(DateTime.Now.ToString());
         }
 
-        public string Echo(string msg)
+        public async Task<string> Echo(string msg)
         {
-            return msg;
+            return await Task.FromResult(msg);
+        }
+
+        [Description("Agents")]
+        public SetChatSessionResponse SetChatSession(SetChatSessionRequest request)
+        {
+            var chatRequest = DataContext.ChatRequests.FirstOrDefault(s => s.Id == request.ChatRequestId);
+            ChatSession chatSession = null;
+            if (chatRequest != null)
+            {
+                chatSession = new ChatSession()
+                {
+                    Id = chatRequest.Id,
+                    Name = chatRequest.Name,
+                    Question = chatRequest.Question,
+                    Query = chatRequest.Query,
+                    ApplicationUserId = request.ChatRequestId
+                };
+                DataContext.ChatSessions.Add(chatSession);
+            }
+            if (chatSession != null)
+            {
+                return new SetChatSessionResponse() { ChatRequestId = chatRequest.Id };
+            }
+            return null;
+        }
+
+        [Description("Client")]
+        public GetChatSessionResponse GetChatSession(GetChatSessionRequest request)
+        {
+            var chatSession = DataContext.ChatSessions.FirstOrDefault(s => s.Id == request.Id);
+            if (chatSession != null)
+                return new GetChatSessionResponse() { ChatSession = chatSession };
+            return null;
+        }
+
+        [Description("Agents")]
+        public GetChatSessionsResponse GetChatSessions(GetChatSessionsRequest request)
+        {
+            var chatSessions = DataContext.ChatSessions.FindAll(cs => cs.ApplicationUserId == request.ApplicationUserId);
+            var result = new GetChatSessionsResponse();
+            if (chatSessions != null && chatSessions.Count > 0)
+            {
+                result.ChatSessions.AddRange(chatSessions);
+                return result;
+            }
+            return null;
         }
 
 
-        public void SetRequest(GetRequestsRequest request)
+        [Description("Client+Agents")]
+        public SetChatMessageResponse SetChatMessage(SetChatMessageRequest request)
         {
-            DataContext.Requests.Add(new ChatRequest()
+            var chatMessage = new ChatMessage()
+            {
+                Message = request.Message,
+                SenderId = request.UserId
+            };
+            DataContext.ChatMessages.Add(chatMessage);
+
+            return new SetChatMessageResponse() { ChatMessage = chatMessage };
+        }
+
+        [Description("Client+Agents")]
+        public GetChatMessagesResponse GetChatMessages(GetChatMessagesRequest request)
+        {
+            var chatMessages = DataContext.ChatMessages.FindAll(cs => cs.ChatSessionId == request.ChatSessionId);
+            if (chatMessages != null || chatMessages.Count > 0)
+            {
+                var result = new GetChatMessagesResponse();
+                result.ChatMessages.AddRange(chatMessages);
+                return result;
+            }
+            return null;
+        }
+
+        [Description("Client")]
+        public SetChatRequestResponse SetChatRequest(SetChatRequestRequest request)
+        {
+            var chatRequest = new ChatRequest()
             {
                 Name = request.Name,
                 Query = request.Query,
                 Agent = request.Agent,
                 Question = request.Question
-            });
+            };
+            DataContext.ChatRequests.Add(chatRequest);
+            return new SetChatRequestResponse() { Id = chatRequest.Id };
         }
 
-        public GetRequestsResponse GetRequests(GetRequestsRequest request)
+        [Description("Agents")]
+        public GetChatRequestsResponse GetChatRequests(GetChatRequestsRequest request)
         {
-            GetRequestsResponse result = new GetRequestsResponse();
-            result.Requests = DataContext.Requests;
+            GetChatRequestsResponse result = new GetChatRequestsResponse();
+            result.Requests = DataContext.ChatRequests;
             return result;
         }
 

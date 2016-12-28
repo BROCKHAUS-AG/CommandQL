@@ -26,24 +26,32 @@ namespace BAG.CommandQL.WebUI.Controllers
         [HttpPost]
         public async Task<ResponseQL> Post(JObject obj)
         {
-            var request = BAG.CommandQL.RequestQL.FromJObject(obj);
             ResponseQL response = null;
-            if (request != null)
+            try
             {
-                var exec = new Execute.Executer(new CommandQLHandler());
-                response = await exec.Execute(request);
+                var request = RequestQL.FromJObject(obj);
+                if (request != null)
+                {
+                    var exec = new Execute.Executer(new CommandQLHandler());
+                    response = await exec.Execute(request);
+                }
+                else
+                {
+                    throw new NullReferenceException("request:(" + request + ")");
+                }
             }
-            else
+            catch (Exception ex)
             {
                 response = new ResponseQL();
-                response.Errors.Add(new NullReferenceException().ToString());
+                response.Errors.Add(ex.Message);
+                response.Errors.Add(ex.ToString());
             }
             return response;
         }
 
 
 
-        
+
 
     }
 

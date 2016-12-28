@@ -5,13 +5,13 @@ using System.Web;
 
 namespace BAG.CommandQL.WebUI.Controllers.Hub
 {
-    public class GetAllConsultantsResponse
+    public class GetConsultantsResponse
     {
-        public GetAllConsultantsResponse()
+        public GetConsultantsResponse()
         {
-            Users = new List<User>();
+            Users = new List<ApplicationUser>();
         }
-        public List<User> Users { get; set; }
+        public List<ApplicationUser> Users { get; set; }
 
 
     }

@@ -25,7 +25,7 @@ module BAG {
         }
 
         invoke(cmd: string, data: any) {
-            var that = this;
+            let that = this;
             console.log("invoke " + cmd);
             let invokeData = {
                 "sender": this.sender,
@@ -43,21 +43,44 @@ module BAG {
                 //complete: setTimeout(function () { call() }, this.completeTimeout),
                 timeout: this.timeout,
                 success: function (data) {
-                    //Update your dashboard gauge
+                    //Update
                     console.debug(data);
                     $.each(data.commands, function (index, cmd) {
 
-                        var fn = that.handler[cmd.name];
-                        if (typeof fn === 'function') {
+                        let fnHandler = that.handler[cmd.name];
+                        if (typeof fnHandler === 'function') {
                             console.debug("call " + cmd.name + " (" + cmd.return + ")");
-                            fn(cmd.return);
+                            //fnHandler(cmd.return);
+                            if (cmd.return && cmd.return.result) {
+                                fnHandler(cmd.return.result);
+                            }
+                            else {
+                                fnHandler(cmd.return);
+                            }
+                        } else {
+                            console.warn("function " + cmd.name + " not found");
                         }
-
+                        let fnOnComplete = that.handler["onComplete"];
+                        if (typeof fnOnComplete === 'function') {
+                            console.debug("call onComplete(data," + cmd.name + ")");
+                            //fnOnComplete(cmd.return, cmd.name);
+                            if (cmd.return && cmd.return.result) {
+                                fnOnComplete(cmd.return.result, cmd.name);
+                            }
+                            else {
+                                fnOnComplete(cmd.return, cmd.name);
+                            }
+                        }
                     });
 
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     console.log(textStatus);
+                    var fnOnError = that.handler["onError"];
+                    if (typeof fnOnError === 'function') {
+                        console.debug("call onError-" + textStatus);
+                        fnOnError(xhr, textStatus, errorThrown);
+                    }
                 }
             });
         }
@@ -73,11 +96,16 @@ module BAG {
 
         publish(cmd: string, data: any) {
             console.log("publish " + cmd);
-            //todo:
+            this.invoke(cmd, data);
         }
 
         unsubscribe(cmd: string) {
-            return "unsubscribe " + cmd;
+            console.log("unsubscribe " + cmd);
+            for (let i = this.commands.length - 1; i >= 0; i--) {
+                if (this.commands[i].name === cmd) {
+                    this.commands.splice(i, 1);
+                }
+            }
         }
 
         connect() {
@@ -90,8 +118,9 @@ module BAG {
             return "disconnect";
         }
 
-        pull() {
-            if (this.status == Status.None){
+        poll() {
+            let that = this;
+            if (this.status == Status.None) {
                 console.log("don't call pull before connect.");
                 return 400;
             }
@@ -99,12 +128,13 @@ module BAG {
                 console.log("don't call pull before connect.");
                 return 300;
             }
+
             let pullData = {
                 "sender": this.sender,
                 "commands": [this.commands]
             };
 
-            var completeFunction = () => setTimeout(function () { this.pull() }, this.completeTimeout);
+            let completeFunction = () => setTimeout(function () { that.poll() }, this.completeTimeout);
 
             $.ajax({
                 url: this.serverpath,
@@ -114,23 +144,48 @@ module BAG {
                 timeout: this.timeout,
                 complete: completeFunction,
                 success: function (data) {
-                    //Update your dashboard gauge
+                    //Update
                     console.debug(data);
                     $.each(data.commands, function (index, cmd) {
 
-                        var fn = this.handler[cmd.name];
-                        if (typeof fn === 'function') {
+                        let fnHandler = that.handler[cmd.name];
+                        if (typeof fnHandler === 'function') {
                             console.debug("call " + cmd.name + " (" + cmd.return + ")");
-                            fn(cmd.return);
+                            //fnHandler(cmd.return);
+                            if (cmd.return && cmd.return.result) {
+                                fnHandler(cmd.return.result);
+                            }
+                            else {
+                                fnHandler(cmd.return);
+                            }
+                        } else {
+                            console.warn("function " + cmd.name + " not found");
                         }
-
+                        let fnOnComplete = that.handler["onComplete"];
+                        if (typeof fnOnComplete === 'function') {
+                            console.debug("call onComplete(data," + cmd.name + ")");
+                            //fnOnComplete(cmd.return, cmd.name);
+                            if (cmd.return && cmd.return.result) {
+                                fnOnComplete(cmd.return.result, cmd.name);
+                            }
+                            else {
+                                fnOnComplete(cmd.return, cmd.name);
+                            }
+                        }
                     });
 
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     console.log(textStatus);
+                    var fnOnError = that.handler["onError"];
+                    if (typeof fnOnError === 'function') {
+                        console.debug("call onError-" + textStatus);
+                        fnOnError(xhr, textStatus, errorThrown);
+                    }
                 }
             });
+
+            return 200;
         }
 
     }

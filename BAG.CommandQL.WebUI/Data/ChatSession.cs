@@ -5,16 +5,16 @@ using System.Web;
 
 namespace BAG.CommandQL.WebUI.Data
 {
-    public class ChatSession
+    public class ChatSession : ChatRequest
     {
-        public ChatSession()
+        public ChatSession() : base()
         {
             History = new List<ChatMessage>();
+            Id = Guid.NewGuid();
         }
-        public Guid Id { get; set; }
-
+        
         public Guid UserId { get; set; }
-        public Guid ConsultantId { get; set; }
+        public Guid ApplicationUserId { get; set; }
 
         public List<ChatMessage> History { get; set; }
     }

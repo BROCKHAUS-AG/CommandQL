@@ -1,6 +1,6 @@
 ﻿namespace BAG.CommandQL.WebUI.Controllers.Hub
 {
-    public class GetRequestsRequest
+    public class SetChatRequestRequest
     {
         public string Name { get; set; }
         public string Agent { get; set; }

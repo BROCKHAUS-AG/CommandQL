@@ -5,7 +5,7 @@ using System.Web;
 
 namespace BAG.CommandQL.WebUI.Controllers.Hub
 {
-    public class GetAllConsultantsRequest
+    public class GetConsultantsRequest
     {
         public string Mandant { get; set; }
         public string Group { get; set; }

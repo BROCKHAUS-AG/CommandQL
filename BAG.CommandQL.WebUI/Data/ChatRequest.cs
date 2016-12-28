@@ -10,8 +10,11 @@ namespace BAG.CommandQL.WebUI.Data
         public ChatRequest()
         {
             Id = Guid.NewGuid();
+            Created = DateTime.Now;
         }
         public Guid Id { get; set; }
+
+        public DateTime Created { get; set; }
 
         public string MandantName { get; set; }
         public string GroupName { get; set; }

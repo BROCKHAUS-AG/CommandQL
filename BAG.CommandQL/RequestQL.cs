@@ -17,6 +17,7 @@ namespace BAG.CommandQL
         public static RequestQL FromJObject(JObject obj)
         {
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+            json = json.Replace("[[", "[").Replace("]]", "]");
             return Newtonsoft.Json.JsonConvert.DeserializeObject<BAG.CommandQL.RequestQL>(json);
         }
 

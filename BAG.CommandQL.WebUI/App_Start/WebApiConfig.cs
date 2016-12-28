@@ -23,7 +23,6 @@ namespace BAG.CommandQL.WebUI
             var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             json.UseDataContractJsonSerializer = false;
 
-            
             json.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
             //var xml = GlobalConfiguration.Configuration.Formatters.XmlFormatter;
@@ -31,7 +30,7 @@ namespace BAG.CommandQL.WebUI
             json.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
 
             //optional: set serializer settings here
-            GlobalConfiguration.Configuration.Services.Replace(typeof(IContentNegotiator), new JsonContentNegotiator(json));
+            //GlobalConfiguration.Configuration.Services.Replace(typeof(IContentNegotiator), new JsonContentNegotiator(json));
 
             GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
             GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters.XmlFormatter);
