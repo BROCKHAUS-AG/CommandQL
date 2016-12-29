@@ -1,7 +1,12 @@
-﻿<div class="jumbotron">
-    <h3>CommandQL by BROCKHAUS AG</h3>
-
+﻿<div class="row">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+    </div>
 </div>
+
 <div class="row">
     <div class="col-md-4">
         <h2>ChatRequest</h2>
@@ -9,7 +14,7 @@
             <input type="text" name="name" id="name" />
         </p>
         <p>
-            <a class="btn btn-default" onclick="setRequestCall()">Start</a>
+            <a class="btn btn-default" onclick="setRequestCall()">start</a>
             <br /><br /><br />
             <img src="~/Content/Images/squares.gif" style="display:none;" class="load" />
             <span class="getChatSession"></span>
@@ -20,17 +25,32 @@
 
     </div>
     <div class="col-md-4">
+        <p>
+            <div class="messages">
 
+            </div>
+        </p>
+        <p>
+            <input type="text" name="message" id="message" class="form-control"/>
+            <br/>
+            <a class="btn btn-default form-control" onclick="setMessageCall()">send</a>
+        </p>
     </div>
 </div>
 @section scripts{
     <script src="~/ViewsScripts/CommandQL.js"></script>
     <script>
         var serverpath = window.location.origin + "/api/commandQL/";
-        var cmdQL = new BAG.CommandQL(window, serverpath);
+        var chatSession = null;
+        var name = null;
+        var cmdQL = new BAG.CommandQL({
+            handler: window,
+            serverpath: serverpath,
+            sender: "frontend"
+        });
 
         function setRequestCall() {
-            var name = $("#name").val();
+            name = $("#name").val();
             $("#name").val("");
             var category = "cat";
             var question = "q";
@@ -45,26 +65,39 @@
                 "name": name,
                 "category": category,
                 "question": question
-            }]);
+            }],
+            function (data) {
+                if (!data)
+                    return;
+                console.log(data);
+                cmdQL.connect();
+                cmdQL.subscribe("getChatSession", [{ "id": data.id }]);
+                cmdQL.poll();
+            });
 
         }
 
+        function setMessageCall() {
+            var message = $("#message").val();
+            $("#message").val("");
 
-        function setChatRequest(data) {
-            if (!data)
-                return;
-            console.log(data);
-            cmdQL.connect();
-            cmdQL.subscribe("getChatSession", [{ "id": data.id }]);
-            cmdQL.poll();
+            cmdQL.invoke("setChatMessage", [{
+                "chatSessionId": chatSession.id,
+                "message": message,
+                "name": name
+            }]);
+
+            $(".messages").append("me" + message + "<br/>");
         }
 
         function getChatSession(data) {
             if (!data)
                 return;
+            chatSession = data.chatSession;
             $(".load").hide();
             $(".getChatSession").html(JSON.stringify(data.chatSession) + "<br/>");
             cmdQL.unsubscribe("getChatSession");
+            cmdQL.subscribe("getChatMessages", [{ "chatMessageId": chatSession.id }]);
         }
 
         function getRequests(data) {

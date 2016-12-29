@@ -1,38 +1,65 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Backend";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var applicationUserId = Guid.Parse("14c1aeac-e911-4837-8fca-5b3264c819e9");
 }
 
+<div class="row">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
 <h2>Backend:@applicationUserId.ToString()</h2>
+<div class="row">
+    <div class="col-md-4">
+        <div class="chatRequests">
+            Requests:<br />
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="chatSessions">
+            ChatSessions:<br />
+        </div>
 
-<div class="chatRequests">
-    Requests:<br/>
-</div>
+        <div class="ping">
+            Ping:<br />
 
-<div class="chatSessions">
-    ChatSessions:<br />
-</div>
-<div class="chatMessages">
-    Messages:<br />
-</div>
-<div class="ping">
-    Ping:<br />
+        </div>
+    </div>
+    <div class="col-md-4">
+        <p>
+            <div class="messages">
 
+            </div>
+        </p>
+        <p>
+            <input type="text" name="message" id="message" class="form-control"/>
+            <br />
+            <a class="btn btn-default form-control" onclick="setMessageCall()">send</a>
+        </p>
+    </div>
 </div>
-
 
 @section scripts{
 
     <script src="~/ViewsScripts/CommandQL.js"></script>
     <script>
         var applicationUserId = "@applicationUserId.ToString()";
-
         var serverpath = window.location.origin + "/api/commandQL/";
-        var cmdQL = new BAG.CommandQL(window, serverpath);
-        cmdQL.sender = "backend";
+        var chatSession = null;
+        var name = null;
+
+
+        var cmdQL = new BAG.CommandQL({
+            handler: window,
+            serverpath: serverpath,
+            sender: "backend"
+        });
+
 
         $(function () {
             cmdQL.subscribe("GetAllConsultants", [{ 'mandant': 'name' }]);
@@ -44,11 +71,30 @@
             cmdQL.poll();
         });
 
-        function callSetChatSession(id) {
-            cmdQL.invoke("SetChatSession", [{ "chatRequestId": id, "applicationUserId": applicationUserId }]);
+        function setMessageCall() {
+            var message = $("#message").val();
+            $("#message").val("");
+
+            cmdQL.invoke("setChatMessage", [{
+                "chatSessionId": chatSession.id,
+                "message": message,
+                "name": name
+            }]);
+
+            $(".messages").append("me" + message + "<br/>");
         }
-        function callSetMessage(msg) {
-            cmdQL.invoke("SetChatMessage", [{ "id": id }]);
+
+        function callSetChatSession(id) {
+            cmdQL.invoke("setChatSession", [{ "chatRequestId": id, "applicationUserId": applicationUserId }]);
+        }
+        function callSetChatMessage(msg) {
+            cmdQL.invoke("setChatMessage", [{ "id": id }]);
+        }
+        function setChatSession(data) {
+            if (!data)
+                return;
+            chatSession = data.chatSession;
+            $(".setChatSession").html(JSON.stringify(data.chatSession) + "<br/>");
         }
         function GetChatSessions(data) {
             if (!data)

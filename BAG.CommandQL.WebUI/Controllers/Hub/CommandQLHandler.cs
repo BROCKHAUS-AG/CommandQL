@@ -50,6 +50,7 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
                     ApplicationUserId = request.ChatRequestId
                 };
                 DataContext.ChatSessions.Add(chatSession);
+                DataContext.ChatRequests.Remove(chatRequest);
             }
             if (chatSession != null)
             {
