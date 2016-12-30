@@ -1,12 +1,20 @@
-﻿<div class="row">
+﻿<br />
+<div class="row">
     <div class="col-md-4">
+        <select name="mandant" class="form-control">
+            <option value="B7D4E718-A900-4A19-8543-D5E28F57F431">Mandant1</option>
+            <option value="B7D4E718-A900-4A19-8543-D5E28F57F432">Mandant2</option>
+        </select>
     </div>
     <div class="col-md-4">
+        <select name="user" class="form-control">
+            <option value="User1">User1</option>
+            <option value="User2">User2</option>
+        </select>
     </div>
     <div class="col-md-4">
     </div>
 </div>
-
 <div class="row">
     <div class="col-md-4">
         <h2>ChatRequest</h2>
@@ -26,13 +34,13 @@
     </div>
     <div class="col-md-4">
         <p>
-            <div class="messages">
+            <div class="chatMessages" style="display:block;height:200px;overflow-x:auto">
 
             </div>
         </p>
         <p>
-            <input type="text" name="message" id="message" class="form-control"/>
-            <br/>
+            <input type="text" name="message" id="message" class="form-control" />
+            <br />
             <a class="btn btn-default form-control" onclick="setMessageCall()">send</a>
         </p>
     </div>
@@ -87,7 +95,7 @@
                 "name": name
             }]);
 
-            $(".messages").append("me" + message + "<br/>");
+            $(".chatMessages").append("me: " + message + "<br/>");
         }
 
         function getChatSession(data) {
@@ -100,6 +108,17 @@
             cmdQL.subscribe("getChatMessages", [{ "chatMessageId": chatSession.id }]);
         }
 
+        function getChatMessages(data) {
+            if (!data)
+                return;
+            var html = "";
+            $.each(data.chatMessages, function (index, element) {
+                html += element.mesage + '<br/><br/>';
+            });
+            $(".chatMessages").append(html);
+            console.log(data);
+        }
+
         function getRequests(data) {
             console.log(data);
         }
@@ -109,7 +128,5 @@
             $(".ping").append(data + "<br/>");
         }
 
-
     </script>
-
 }

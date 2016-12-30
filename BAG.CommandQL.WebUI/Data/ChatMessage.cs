@@ -7,6 +7,10 @@ namespace BAG.CommandQL.WebUI.Data
 {
     public class ChatMessage
     {
+        public ChatMessage()
+        {
+            Id = Guid.NewGuid();
+        }
         public Guid Id { get; set; }
 
         public Guid ChatSessionId { get; set; }

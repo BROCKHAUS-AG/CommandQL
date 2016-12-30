@@ -4,15 +4,24 @@
 
     var applicationUserId = Guid.Parse("14c1aeac-e911-4837-8fca-5b3264c819e9");
 }
-
+<br />
 <div class="row">
     <div class="col-md-4">
+        <select name="mandant" class="form-control">
+            <option value="B7D4E718-A900-4A19-8543-D5E28F57F431">Mandant1</option>
+            <option value="B7D4E718-A900-4A19-8543-D5E28F57F432">Mandant2</option>
+        </select>
     </div>
     <div class="col-md-4">
+        <select name="agent" class="form-control">
+            <option value="14c1aeac-e911-4837-8fca-5b3264c819e1">Agent1</option>
+            <option value="14c1aeac-e911-4837-8fca-5b3264c819e2">Agent2</option>
+        </select>
     </div>
     <div class="col-md-4">
     </div>
 </div>
+
 <h2>Backend:@applicationUserId.ToString()</h2>
 <div class="row">
     <div class="col-md-4">
@@ -32,12 +41,12 @@
     </div>
     <div class="col-md-4">
         <p>
-            <div class="messages">
+            <div class="chatMessages">
 
             </div>
         </p>
         <p>
-            <input type="text" name="message" id="message" class="form-control"/>
+            <input type="text" name="message" id="message" class="form-control" />
             <br />
             <a class="btn btn-default form-control" onclick="setMessageCall()">send</a>
         </p>
@@ -52,7 +61,7 @@
         var serverpath = window.location.origin + "/api/commandQL/";
         var chatSession = null;
         var name = null;
-
+        var currentMessages = [];
 
         var cmdQL = new BAG.CommandQL({
             handler: window,
@@ -62,41 +71,41 @@
 
 
         $(function () {
-            cmdQL.subscribe("GetAllConsultants", [{ 'mandant': 'name' }]);
-            cmdQL.subscribe("Ping", []);
-            cmdQL.subscribe("GetChatRequests", [{ "applicationUserId": applicationUserId }]);
-            cmdQL.subscribe("GetChatSessions", [{ "applicationUserId": applicationUserId }]);
-            cmdQL.subscribe("GetChatMessages", [{ "applicationUserId": applicationUserId }]);
+            cmdQL.subscribe("getAllConsultants", [{ 'mandant': 'name' }]);
+            cmdQL.subscribe("ping", []);
+            cmdQL.subscribe("getChatRequests", [{ "applicationUserId": applicationUserId }]);
+            cmdQL.subscribe("getChatSessions", [{ "applicationUserId": applicationUserId }]);
+            cmdQL.subscribe("getChatMessages", [{ "applicationUserId": applicationUserId }]);
             cmdQL.connect();
             cmdQL.poll();
         });
 
+
+        function callSetChatSession(id) {
+            cmdQL.invoke("setChatSession",
+                [{ "chatRequestId": id, "applicationUserId": applicationUserId }],
+                function (data) {
+                    if (!data)
+                        return;
+                    chatSession = data.chatSession;
+                    $(".setChatSession").html(JSON.stringify(data.chatSession) + "<br/>");
+                });
+        }
         function setMessageCall() {
             var message = $("#message").val();
             $("#message").val("");
 
             cmdQL.invoke("setChatMessage", [{
+                "applicationUserId": applicationUserId,
                 "chatSessionId": chatSession.id,
                 "message": message,
                 "name": name
             }]);
 
-            $(".messages").append("me" + message + "<br/>");
+            $(".chatMessages").append("me: " + message + "<br/>");
         }
 
-        function callSetChatSession(id) {
-            cmdQL.invoke("setChatSession", [{ "chatRequestId": id, "applicationUserId": applicationUserId }]);
-        }
-        function callSetChatMessage(msg) {
-            cmdQL.invoke("setChatMessage", [{ "id": id }]);
-        }
-        function setChatSession(data) {
-            if (!data)
-                return;
-            chatSession = data.chatSession;
-            $(".setChatSession").html(JSON.stringify(data.chatSession) + "<br/>");
-        }
-        function GetChatSessions(data) {
+        function getChatSessions(data) {
             if (!data)
                 return;
             var html = "";
@@ -106,17 +115,29 @@
             $(".chatSessions").html(html);
             console.log(data);
         }
-        function GetChatMessages(data) {
+        function getChatMessages(data) {
             if (!data)
                 return;
             var html = "";
-            $.each(data.chatMessages, function (index, element) {
-                html += element.mesage + '<br/><br/>';
+            $.each(data.chatMessages, function (index, on_element) {
+                var contains = false;
+                $.each(currentMessages, function (index, off_element) {
+                    if (off_element.id == on_element.id) {
+                        contains = true;
+                        off_element.status = on_element.status;
+                    }
+                });
+                if (!contains) {
+                    currentMessages.push(on_element);
+                    html += on_element.message + '<br/>';
+                }
             });
-            $(".chatMessages").html(html);
+            if (html) {
+                $(".chatMessages").append(html);
+            }
             console.log(data);
         }
-        function GetChatRequests(data) {
+        function getChatRequests(data) {
             if (!data)
                 return;
             var html = "";
@@ -128,7 +149,7 @@
         }
 
 
-        function Ping(data) {
+        function ping(data) {
             $(".ping").append(data + "<br/>");
             console.log(data);
         }

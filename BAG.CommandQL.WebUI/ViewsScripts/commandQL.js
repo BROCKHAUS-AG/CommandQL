@@ -105,7 +105,7 @@ var BAG;
             }
             var pullData = {
                 "sender": this.sender,
-                "commands": [this.commands]
+                "commands": this.commands
             };
             var completeFunction = function () { return setTimeout(function () { that.poll(); }, _this.completeTimeout); };
             $.ajax({
@@ -240,3 +240,4 @@ var BAG;
     })();
     BAG.CommandQL = CommandQL;
 })(BAG || (BAG = {}));
+//# sourceMappingURL=CommandQL.js.map

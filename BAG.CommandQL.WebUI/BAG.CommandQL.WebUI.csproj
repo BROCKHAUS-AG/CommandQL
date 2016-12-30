@@ -359,7 +359,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="ViewsScripts\Backend.ts" />
     <TypeScriptCompile Include="ViewsScripts\CommandQL.ts" />
+    <TypeScriptCompile Include="ViewsScripts\Frontend.ts" />
+    <TypeScriptCompile Include="ViewsScripts\IConfigurationQL.ts" />
     <TypeScriptCompile Include="ViewsScripts\jquery.ts" />
   </ItemGroup>
   <ItemGroup>

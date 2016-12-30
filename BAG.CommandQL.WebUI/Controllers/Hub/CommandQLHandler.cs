@@ -54,7 +54,11 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
             }
             if (chatSession != null)
             {
-                return new SetChatSessionResponse() { ChatRequestId = chatRequest.Id };
+                return new SetChatSessionResponse()
+                {
+                    ChatSession = chatSession,
+                    ChatRequestId = chatRequest.Id
+                };
             }
             return null;
         }

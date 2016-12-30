@@ -111,7 +111,7 @@ module BAG {
 
             let pullData = {
                 "sender": this.sender,
-                "commands": [this.commands]
+                "commands": this.commands
             };
 
             let completeFunction = () => setTimeout(function () { that.poll() }, this.completeTimeout);
@@ -241,25 +241,14 @@ module BAG {
         private _error(that: CommandQL, xhr, textStatus, errorThrown, error: Function) {
             console.log(textStatus);
             if (typeof error === "function") {
-            { error(xhr, textStatus, errorThrown); }
+                { error(xhr, textStatus, errorThrown); }
 
-            var fnOnError = that.handler["onError"];
-            if (typeof fnOnError === 'function') {
-                console.debug("call onError-" + textStatus);
-                fnOnError(xhr, textStatus, errorThrown);
+                var fnOnError = that.handler["onError"];
+                if (typeof fnOnError === 'function') {
+                    console.debug("call onError-" + textStatus);
+                    fnOnError(xhr, textStatus, errorThrown);
+                }
             }
         }
-    }
-
-    interface IConfigurationQL {
-        serverpath?: string;
-        handler: any;
-        sender: string;
-        token?: string;
-        qs?: string;
-        timeout?: number;
-        completeTimeout?: number;
-        callWithEmptyReturn?: boolean;
-        headers?: any;
     }
 }
