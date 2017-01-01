@@ -19,7 +19,7 @@ namespace BAG.CommandQL.WebUI.Controllers
         // GET api/<controller>
         public object Get()
         {
-            return new Analyzer(new CommandQLHandler());
+            return new Analyzer(new CommandQLHandler(System.Web.HttpContext.Current));
         }
 
         // POST api/<controller>
@@ -32,7 +32,7 @@ namespace BAG.CommandQL.WebUI.Controllers
                 var request = RequestQL.FromJObject(obj);
                 if (request != null)
                 {
-                    var exec = new Execute.Executer(new CommandQLHandler());
+                    var exec = new Execute.Executer(new CommandQLHandler(System.Web.HttpContext.Current));
                     response = await exec.Execute(request);
                 }
                 else

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAG.CommandQL", "BAG.Comman
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAG.CommandQL.Test", "BAG.CommandQL.Test\BAG.CommandQL.Test.csproj", "{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatSolution.Data.Entities", "ChatSolution.Data.Entities\ChatSolution.Data.Entities.csproj", "{DFB558FF-0E39-4083-8AA5-E8DFC3C59C6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{422D7EDD-3D32-4658-A3B1-C2FB4AD18DD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB558FF-0E39-4083-8AA5-E8DFC3C59C6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB558FF-0E39-4083-8AA5-E8DFC3C59C6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB558FF-0E39-4083-8AA5-E8DFC3C59C6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB558FF-0E39-4083-8AA5-E8DFC3C59C6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

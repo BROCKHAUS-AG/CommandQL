@@ -1,4 +1,5 @@
 ﻿using BAG.CommandQL.WebUI.Data;
+using ChatSolution.Data.Entities;
 using Microsoft.Owin;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,26 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
 
     public class CommandQLHandler
     {
-        public GetConsultantsResponse GetConsultants(GetConsultantsRequest req)
+        public CommandQLHandler(HttpContext context)
         {
-            GetConsultantsResponse result = new GetConsultantsResponse();
+            this.Context = context;
+        }
 
-            result.Users.Add(new ApplicationUser() { Name = "Matthias" });
-            result.Users.Add(new ApplicationUser() { Name = "Guido" });
-            result.Users.Add(new ApplicationUser() { Name = "Paul" });
+        public HttpContext Context { get; set; }
 
+        public ChangeGetApplicationUserResponse ChangeGetApplicationUser(ChangeGetApplicationUserRequest req)
+        {
+            //TODO: change user status!!!
+            return null;
+        }
+        public GetGetApplicationUsersResponse GetApplicationUsers(GetGetApplicationUsersRequest req)
+        {
+            GetGetApplicationUsersResponse result = new GetGetApplicationUsersResponse();
+            result.ApplicationUsers = DataContext.ApplicationUsers.FindAll(
+                u =>
+                    u.Group != null &&
+                    u.Group.Id == req.GroupId
+                    );
             return result;
         }
 
@@ -35,51 +48,53 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
         }
 
         [Description("Agents")]
-        public SetChatSessionResponse SetChatSession(SetChatSessionRequest request)
+        public SetLiveChatChannelResponse SetLiveChatChannel(SetLiveChatChannelRequest request)
         {
-            var chatRequest = DataContext.ChatRequests.FirstOrDefault(s => s.Id == request.ChatRequestId);
-            ChatSession chatSession = null;
-            if (chatRequest != null)
+            var liveChatRequest = DataContext.LiveChatRequests.FirstOrDefault(s => s.Id == request.LiveChatRequestId);
+            LiveChatChannel liveChatChannel = null;
+            if (liveChatRequest != null)
             {
-                chatSession = new ChatSession()
-                {
-                    Id = chatRequest.Id,
-                    Name = chatRequest.Name,
-                    Question = chatRequest.Question,
-                    Query = chatRequest.Query,
-                    ApplicationUserId = request.ChatRequestId
-                };
-                DataContext.ChatSessions.Add(chatSession);
-                DataContext.ChatRequests.Remove(chatRequest);
+                //find user
+
+                //add app user to channel
+                liveChatChannel = new LiveChatChannel(
+                    liveChatRequest,
+                    new ChatSolution.Data.Entities.ApplicationUser()
+                    {
+                        Id = request.ApplicationUserId.ToString(),
+                        UserName = "Agent Name"
+                    });
+                DataContext.LiveChatChannels.Add(liveChatChannel);
+                DataContext.LiveChatRequests.Remove(liveChatRequest);
             }
-            if (chatSession != null)
+            if (liveChatChannel != null)
             {
-                return new SetChatSessionResponse()
+                return new SetLiveChatChannelResponse()
                 {
-                    ChatSession = chatSession,
-                    ChatRequestId = chatRequest.Id
+                    LiveChatChannel = liveChatChannel,
+                    LiveChatRequestId = liveChatRequest.Id
                 };
             }
             return null;
         }
 
         [Description("Client")]
-        public GetChatSessionResponse GetChatSession(GetChatSessionRequest request)
+        public GetLiveChatChannelResponse GetLiveChatChannel(GetLiveChatChannelRequest request)
         {
-            var chatSession = DataContext.ChatSessions.FirstOrDefault(s => s.Id == request.Id);
-            if (chatSession != null)
-                return new GetChatSessionResponse() { ChatSession = chatSession };
+            var liveChatChannel = DataContext.LiveChatChannels.FirstOrDefault(s => s.LiveChatRequestId == request.LiveChatRequestId);
+            if (liveChatChannel != null)
+                return new GetLiveChatChannelResponse() { LiveChatChannel = liveChatChannel };
             return null;
         }
 
         [Description("Agents")]
-        public GetChatSessionsResponse GetChatSessions(GetChatSessionsRequest request)
+        public GetLiveChatChannelsResponse GetChatSessions(GetLiveChatChannelsRequest request)
         {
-            var chatSessions = DataContext.ChatSessions.FindAll(cs => cs.ApplicationUserId == request.ApplicationUserId);
-            var result = new GetChatSessionsResponse();
-            if (chatSessions != null && chatSessions.Count > 0)
+            var liveChatChannels = DataContext.LiveChatChannels.FindAll(cs => cs.ApplicationUserId == request.ApplicationUserId);
+            var result = new GetLiveChatChannelsResponse();
+            if (liveChatChannels != null && liveChatChannels.Count > 0)
             {
-                result.ChatSessions.AddRange(chatSessions);
+                result.LiveChatChannels.AddRange(liveChatChannels);
                 return result;
             }
             return null;
@@ -87,50 +102,79 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
 
 
         [Description("Client+Agents")]
-        public SetChatMessageResponse SetChatMessage(SetChatMessageRequest request)
+        public SetLiveChatMessageResponse SetLiveChatMessage(SetLiveChatMessageRequest request)
         {
-            var chatMessage = new ChatMessage()
+            //request.LiveChatChannelId;
+            var liveChatMessage = new LiveChatMessage()
             {
+                LiveChatChannelId = request.LiveChatChannelId,
                 Message = request.Message,
-                SenderId = request.UserId
+                SenderId = request.UserId,
+                UserName = request.UserName,
             };
-            DataContext.ChatMessages.Add(chatMessage);
+            DataContext.LiveChatMessages.Add(liveChatMessage);
 
-            return new SetChatMessageResponse() { ChatMessage = chatMessage };
+            return new SetLiveChatMessageResponse() { LiveChatMessage = liveChatMessage };
         }
 
         [Description("Client+Agents")]
-        public GetChatMessagesResponse GetChatMessages(GetChatMessagesRequest request)
+        public GetLiveChatMessageResponse GetLiveChatMessages(GetLiveChatMessageRequest request)
         {
-            var chatMessages = DataContext.ChatMessages.FindAll(cs => cs.ChatSessionId == request.ChatSessionId);
-            if (chatMessages != null || chatMessages.Count > 0)
+            var liveChatMessage = DataContext.LiveChatMessages.FirstOrDefault(cs => cs.Id == request.LiveChatMessageId);
+            if (liveChatMessage != null)
             {
-                var result = new GetChatMessagesResponse();
-                result.ChatMessages.AddRange(chatMessages);
+                var result = new GetLiveChatMessageResponse();
+                result.LiveChatMessage = liveChatMessage;
+                return result;
+            }
+            return null;
+        }
+
+        [Description("Client+Agents")]
+        public GetLiveChatMessagesResponse GetLiveChatMessages(GetLiveChatMessagesRequest request)
+        {
+            var liveChatMessages = DataContext.LiveChatMessages.FindAll(cs => cs.LiveChatChannelId == request.LiveChatChannelId);
+            if (liveChatMessages != null || liveChatMessages.Count > 0)
+            {
+                var result = new GetLiveChatMessagesResponse();
+                result.LiveChatMessages.AddRange(liveChatMessages);
                 return result;
             }
             return null;
         }
 
         [Description("Client")]
-        public SetChatRequestResponse SetChatRequest(SetChatRequestRequest request)
+        public SetLiveChatRequestResponse SetLiveChatRequest(SetLiveChatRequestRequest request)
         {
-            var chatRequest = new ChatRequest()
+            var liveChatRequest = new LiveChatRequest()
             {
-                Name = request.Name,
-                Query = request.Query,
-                Agent = request.Agent,
-                Question = request.Question
+                Category = request.Category,
+                CustomerNumber = request.CustomerNumber,
+                Device = request.Device,
+                Ip = request.Ip,
+                Parameter = request.Parameter,
+                Question = request.Question,
+                Sender = request.Sender,
+                Tag = request.Tag,
+                UserAgent = request.UserAgent,
+                UserId = request.UserId,
+                UserName = request.UserName,
+                Url = request.Url,
+                Token = request.Token,
+                //mandanten
+                Scope = request.Scope,
+                ReferenceId = request.ReferenceId
             };
-            DataContext.ChatRequests.Add(chatRequest);
-            return new SetChatRequestResponse() { Id = chatRequest.Id };
+
+            DataContext.LiveChatRequests.Add(liveChatRequest);
+            return new SetLiveChatRequestResponse() { Id = liveChatRequest.Id };
         }
 
         [Description("Agents")]
-        public GetChatRequestsResponse GetChatRequests(GetChatRequestsRequest request)
+        public GetLiveChatRequestsResponse GetLiveChatRequests(GetLiveChatRequestsRequest request)
         {
-            GetChatRequestsResponse result = new GetChatRequestsResponse();
-            result.Requests = DataContext.ChatRequests;
+            GetLiveChatRequestsResponse result = new GetLiveChatRequestsResponse();
+            result.LiveChatRequests = DataContext.LiveChatRequests.FindAll(r => r.ReferenceId == request.GroupId);
             return result;
         }
 
@@ -183,7 +227,7 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
         //changeConsultant -consultantStatusChanged-setConsultantData-changeConsultantStatus
         //
 
-        private void CorrectMessageLength(ChatMessage message)
+        private void CorrectMessageLength(LiveChatMessage message)
         {
             int allowedLength = 10000;//WebConfiguration.MaxChatMessageLength;
             if (!String.IsNullOrWhiteSpace(message.Message))
@@ -197,7 +241,7 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
             }
         }
 
-        private void CorrectIllegalStrings(ChatMessage message)  //SECURITY
+        private void CorrectIllegalStrings(LiveChatMessage message)  //SECURITY
         {
             string[,] forbiddenRegex = new string[,] {
                         {"SCRIPT",@"</*(\s*|\+*?|\n*)*s(\+*?)*c(\+*?)*r(\+*?)*i(\+*?)*p(\+*?)*t.*?>"},

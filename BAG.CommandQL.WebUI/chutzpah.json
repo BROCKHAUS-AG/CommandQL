@@ -1,0 +1,7 @@
+﻿{
+  "Framework": "jasmine",
+  "References": [
+    { "Path": "ViewsScripts", "Includes": [ "*.js" ], "Excludes": ["*.d.ts"] }
+  ],
+  "Tests": [{ "Include": "*Tests.js" }]
+}

@@ -1,13 +1,16 @@
-﻿<br />
+﻿@{
+    var groupId = Guid.Parse("B7D4E718-A900-4A19-8543-D5E28F57F431");
+}
+<br />
 <div class="row">
     <div class="col-md-4">
-        <select name="mandant" class="form-control">
-            <option value="B7D4E718-A900-4A19-8543-D5E28F57F431">Mandant1</option>
-            <option value="B7D4E718-A900-4A19-8543-D5E28F57F432">Mandant2</option>
+        <select name="group" class="form-control" id="group">
+            <option value="B7D4E718-A900-4A19-8543-D5E28F57F431" selected>group1</option>
+            <option value="B7D4E718-A900-4A19-8543-D5E28F57F432">group2</option>
         </select>
     </div>
     <div class="col-md-4">
-        <select name="user" class="form-control">
+        <select name="user" class="form-control" id="user">
             <option value="User1">User1</option>
             <option value="User2">User2</option>
         </select>
@@ -47,86 +50,120 @@
 </div>
 @section scripts{
     <script src="~/ViewsScripts/CommandQL.js"></script>
+    <script src="~/ViewsScripts/AppFrontendQL.js"></script>
     <script>
         var serverpath = window.location.origin + "/api/commandQL/";
-        var chatSession = null;
-        var name = null;
-        var cmdQL = new BAG.CommandQL({
+
+        var app = new BAG.AppFrontendQL({
             handler: window,
             serverpath: serverpath,
             sender: "frontend"
         });
 
+        app.init($("#group").val());
+
         function setRequestCall() {
-            name = $("#name").val();
+            var name = $("#name").val();
             $("#name").val("");
-            var category = "cat";
-            var question = "q";
-            var agent = navigator.userAgent;
-            var sender = "sender";
-            var parameter = "";
-            var mandant = "";
-            var group = "";
+            var category = "";
             $(".load").show();
-            cmdQL.invoke("setChatRequest", [{
-                "mandant": mandant,
-                "name": name,
-                "category": category,
-                "question": question
-            }],
-            function (data) {
-                if (!data)
-                    return;
-                console.log(data);
-                cmdQL.connect();
-                cmdQL.subscribe("getChatSession", [{ "id": data.id }]);
-                cmdQL.poll();
-            });
-
+            app.createRequest(name, category);
         }
-
+        
         function setMessageCall() {
             var message = $("#message").val();
             $("#message").val("");
 
-            cmdQL.invoke("setChatMessage", [{
-                "chatSessionId": chatSession.id,
-                "message": message,
-                "name": name
-            }]);
-
-            $(".chatMessages").append("me: " + message + "<br/>");
+            app.send(message);
         }
 
-        function getChatSession(data) {
-            if (!data)
-                return;
-            chatSession = data.chatSession;
-            $(".load").hide();
-            $(".getChatSession").html(JSON.stringify(data.chatSession) + "<br/>");
-            cmdQL.unsubscribe("getChatSession");
-            cmdQL.subscribe("getChatMessages", [{ "chatMessageId": chatSession.id }]);
-        }
 
-        function getChatMessages(data) {
-            if (!data)
-                return;
-            var html = "";
-            $.each(data.chatMessages, function (index, element) {
-                html += element.mesage + '<br/><br/>';
-            });
-            $(".chatMessages").append(html);
-            console.log(data);
-        }
+        ////var liveChatChannel = null;
+        ////var name = null;
+        ////var currentMessages = [];
+        
+        ////var cmdQL = new BAG.CommandQL({
+        ////    handler: window,
+        ////    serverpath: serverpath,
+        ////    sender: "frontend"
+        ////});
 
-        function getRequests(data) {
-            console.log(data);
-        }
+        ////function setRequestCall() {
+        ////    name = $("#name").val();
+        ////    $("#name").val("");
+        ////    var userAgent = navigator.userAgent;
+        ////    var sender = "sender";
+        ////    var parameter = "";
+        ////    $(".load").show();
+        ////    cmdQL.invoke("setLiveChatRequest", [{
+        ////        "scope": "group",
+        ////        "referenceId": $("#mandant").val(),
+        ////        "userName": name,
+        ////        "userAgent": userAgent,
+        ////        "category": "allgemein",
+        ////        "question": "my question"
+        ////    }],
+        ////    function (data) {
+        ////        if (!data)
+        ////            return;
+        ////        console.log(data);
+        ////        cmdQL.connect();
+        ////        cmdQL.subscribe("getLiveChatChannel", [{ "liveChatRequestId": data.id }],
+        ////            function (data) {
+        ////                if (!data)
+        ////                    return;
+        ////                liveChatChannel = data.liveChatChannel;
+        ////                $(".load").hide();
+        ////                $(".getChatSession").html(JSON.stringify(liveChatChannel) + "<br/>");
+        ////                cmdQL.unsubscribe("getLiveChatChannel");
+        ////                cmdQL.subscribe("getLiveChatMessages", [{ "liveChatMessageId": liveChatChannel.id }],
+        ////                    function (data) {
+        ////                        if (!data)
+        ////                            return;
+        ////                        var html = "";
+        ////                        $.each(data.liveChatMessages, function (index, on_element) {
+        ////                            var contains = false;
+        ////                            $.each(currentMessages, function (index, off_element) {
+        ////                                if (off_element.id == on_element.id) {
+        ////                                    contains = true;
+        ////                                    off_element.status = on_element.status;
+        ////                                }
+        ////                            });
+        ////                            if (!contains) {
+        ////                                currentMessages.push(on_element);
+        ////                                html += on_element.message + '<br/>';
+        ////                            }
+        ////                        });
+        ////                        if (html) {
+        ////                            $(".chatMessages").append(html);
+        ////                        }
+        ////                        console.log(data);
+        ////                    });
+        ////            });
+        ////        cmdQL.poll();
+        ////    });
 
-        function ping(data) {
-            console.log(data);
-            $(".ping").append(data + "<br/>");
-        }
+        ////}
+
+        ////function setMessageCall() {
+        ////    var message = $("#message").val();
+        ////    $("#message").val("");
+
+        ////    cmdQL.invoke("setLiveChatMessage", [{
+        ////        "id": cmdQL.newGuid(),
+        ////        "liveChatChannelId": liveChatChannel.id,
+        ////        "message": message,
+        ////        "name": name
+        ////    }]);
+
+        ////    $(".chatMessages").append("me: " + message + "<br/>");
+        ////}
+
+
+        ////function ping(data) {
+        ////    console.log(data);
+        ////    $(".ping").append(data + "<br/>");
+        ////}
 
     </script>
 }

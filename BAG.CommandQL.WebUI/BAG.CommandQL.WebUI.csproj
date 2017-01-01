@@ -239,30 +239,29 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CommandQLController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\Hub\ChangeGetApplicationUserRequest.cs" />
+    <Compile Include="Controllers\Hub\ChangeGetApplicationUserResponse.cs" />
     <Compile Include="Controllers\Hub\CommandQLHandler.cs" />
-    <Compile Include="Controllers\Hub\GetAllConsultantsRequest.cs" />
-    <Compile Include="Controllers\Hub\GetAllConsultantsResponse.cs" />
-    <Compile Include="Controllers\Hub\GetChatSessionRequest.cs" />
-    <Compile Include="Controllers\Hub\GetChatSessionResponse.cs" />
-    <Compile Include="Controllers\Hub\GetChatMessagesRequest.cs" />
-    <Compile Include="Controllers\Hub\GetChatSessionsRequest.cs" />
-    <Compile Include="Controllers\Hub\GetChatSessionsResponse.cs" />
-    <Compile Include="Controllers\Hub\GetMessagesResponse.cs" />
-    <Compile Include="Controllers\Hub\GetRequestsResponse.cs" />
-    <Compile Include="Controllers\Hub\SetChatSessionRequest.cs" />
-    <Compile Include="Controllers\Hub\SetChatSessionResponse.cs" />
-    <Compile Include="Controllers\Hub\SetChatMessageRequest.cs" />
-    <Compile Include="Controllers\Hub\SetChatMessageResponse.cs" />
-    <Compile Include="Controllers\Hub\SetChatRequestRequest.cs" />
-    <Compile Include="Controllers\Hub\SetChatRequestResponse.cs" />
+    <Compile Include="Controllers\Hub\GetGetApplicationUsersRequest.cs" />
+    <Compile Include="Controllers\Hub\GetGetApplicationUsersResponse.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatChannelRequest.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatChannelResponse.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatMessageRequest.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatMessageResponse.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatMessagesRequest.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatChannelsRequest.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatChannelsResponse.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatMessagesResponse.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatRequestsResponse.cs" />
+    <Compile Include="Controllers\Hub\SetLiveChatChannelRequest.cs" />
+    <Compile Include="Controllers\Hub\SetLiveChatChannelResponse.cs" />
+    <Compile Include="Controllers\Hub\SetLiveChatMessageRequest.cs" />
+    <Compile Include="Controllers\Hub\SetLiveChatMessageResponse.cs" />
+    <Compile Include="Controllers\Hub\SetLiveChatRequestRequest.cs" />
+    <Compile Include="Controllers\Hub\SetLiveChatRequestResponse.cs" />
     <Compile Include="Controllers\PingRequest.cs" />
-    <Compile Include="Controllers\Hub\GetChatRequestsRequest.cs" />
-    <Compile Include="Controllers\Hub\ApplicationUser.cs" />
+    <Compile Include="Controllers\Hub\GetLiveChatRequestsRequest.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="Data\ChatRequest.cs" />
-    <Compile Include="Data\ChatMessage.cs" />
-    <Compile Include="Data\ChatSession.cs" />
-    <Compile Include="Data\Consultant.cs" />
     <Compile Include="Data\DataContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -309,6 +308,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="chutzpah.json" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -320,6 +320,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="ViewsScripts\CommandQL_Tests.js" />
+    <Content Include="ViewsScripts\jasmine.js" />
+    <Content Include="ViewsScripts\jquery-1.10.2.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -357,16 +360,21 @@
       <Project>{74d80b28-d04b-45fc-a799-4e45bed69d61}</Project>
       <Name>BAG.CommandQL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ChatSolution.Data.Entities\ChatSolution.Data.Entities.csproj">
+      <Project>{dfb558ff-0e39-4083-8aa5-e8dfc3c59c6a}</Project>
+      <Name>ChatSolution.Data.Entities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="ViewsScripts\Backend.ts" />
     <TypeScriptCompile Include="ViewsScripts\CommandQL.ts" />
-    <TypeScriptCompile Include="ViewsScripts\Frontend.ts" />
+    <TypeScriptCompile Include="ViewsScripts\AppFrontendQL.ts" />
     <TypeScriptCompile Include="ViewsScripts\IConfigurationQL.ts" />
     <TypeScriptCompile Include="ViewsScripts\jquery.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -404,6 +412,13 @@
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>copy  /Y "$(ProjectDir)ViewsScripts\*.*" "$(SolutionDir)BAG.CommandQL.JS\"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
