@@ -54,7 +54,7 @@
     <Compile Include="LiveChatCommand.cs" />
     <Compile Include="LiveChatChannel.cs" />
     <Compile Include="LiveChatMessage.cs" />
-    <Compile Include="LiveChatRule - Kopieren.cs" />
+    <Compile Include="LiveChatFile.cs" />
     <Compile Include="LiveChatTransferRequest.cs" />
     <Compile Include="LiveChatRequest.cs" />
     <Compile Include="LiveChatRule.cs" />
