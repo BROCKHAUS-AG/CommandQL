@@ -18,4 +18,3 @@ var BAG;
     }());
     BAG.BackendApp = BackendApp;
 })(BAG || (BAG = {}));
-//# sourceMappingURL=Backend.js.map

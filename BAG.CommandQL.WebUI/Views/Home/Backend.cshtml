@@ -110,7 +110,25 @@
                     $(".chatSessions").html(html);
                     console.log(data);
                 });
-            cmdQL.subscribe("getLiveChatMessages", [{ "applicationUserId": applicationUserId }],
+
+
+            
+            cmdQL.connect();
+            cmdQL.poll();
+        });
+
+
+        function callSetChatSession(id) {
+            cmdQL.invoke("setLiveChatChannel",
+                [{ "liveChatRequestId": id, "applicationUserId": applicationUserId }],
+                function (data) {
+                    if (!data)
+                        return;
+                    liveChatChannel = data.liveChatChannel;
+                    $(".setChatSession").html(JSON.stringify(data.liveChatChannel) + "<br/>");
+
+
+                    cmdQL.subscribe("getLiveChatMessages", [{ "liveChatChannelId": data.liveChatChannel.id }],
                 function (data) {
                     if (!data)
                         return;
@@ -133,19 +151,7 @@
                     }
                     console.log(data);
                 });
-            cmdQL.connect();
-            cmdQL.poll();
-        });
 
-
-        function callSetChatSession(id) {
-            cmdQL.invoke("setLiveChatChannel",
-                [{ "liveChatRequestId": id, "applicationUserId": applicationUserId }],
-                function (data) {
-                    if (!data)
-                        return;
-                    liveChatChannel = data.liveChatChannel;
-                    $(".setChatSession").html(JSON.stringify(data.liveChatChannel) + "<br/>");
                 });
         }
         function setMessageCall() {

@@ -36,7 +36,7 @@ var BAG;
                 $(".load").hide();
                 $(".getChatSession").html(JSON.stringify(that.liveChatChannel) + "<br/>");
                 that.cmdQL.unsubscribe("getLiveChatChannel");
-                that.cmdQL.subscribe("getLiveChatMessages", [{ "liveChatMessageId": that.liveChatChannel.id }], function (data) {
+                that.cmdQL.subscribe("getLiveChatMessages", [{ "liveChatChannelId": that.liveChatChannel.id }], function (data) {
                     if (!data)
                         return;
                     var html = "";

@@ -118,7 +118,7 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
         }
 
         [Description("Client+Agents")]
-        public GetLiveChatMessageResponse GetLiveChatMessages(GetLiveChatMessageRequest request)
+        public GetLiveChatMessageResponse GetLiveChatMessage(GetLiveChatMessageRequest request)
         {
             var liveChatMessage = DataContext.LiveChatMessages.FirstOrDefault(cs => cs.Id == request.LiveChatMessageId);
             if (liveChatMessage != null)
