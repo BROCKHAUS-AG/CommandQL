@@ -40,5 +40,8 @@ namespace BAG.CommandQL
         public string User { get; set; }
 
         public string Channel { get; set; }
+
+        //Time-Durration ms
+        public int T { get; set; }
     }
 }

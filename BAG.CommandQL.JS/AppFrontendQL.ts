@@ -84,22 +84,22 @@
             that.cmdQL.poll();
         }
 
-        send(message) {
+        send(messageText) {
             let that = this;
 
             that.cmdQL.invoke("setLiveChatMessage", [{
                 "id": that.cmdQL.newGuid(),
                 "liveChatChannelId": that.liveChatChannel.id,
-                "message": message,
+                "message": messageText,
                 "userName": that.userName
             }], function (data) {
-                that.cmdQL.subscribe("getLiveChatMessage", [{ "liveChatMessageId": data.liveChatMessage.id }],
-                    function (data) {
-                        that.cmdQL.unsubscribe("getLiveChatMessage", [{ "liveChatMessageId": data.liveChatMessage.id }]);
-                    });
+                //that.cmdQL.subscribe("getLiveChatMessage", [{ "liveChatMessageId": data.liveChatMessage.id }],
+                //    function (data) {
+                //        that.cmdQL.unsubscribe("getLiveChatMessage", [{ "liveChatMessageId": data.liveChatMessage.id }]);
+                //    });
             });
 
-            $(".chatMessages").append("me: " + message + "<br/>");
+            $(".chatMessages").append("me: " + messageText + "<br/>");
         }
 
         ping(data) {

@@ -292,6 +292,7 @@ var BAG;
             return result;
         };
         return CommandQL;
-    }());
+    })();
     BAG.CommandQL = CommandQL;
 })(BAG || (BAG = {}));
+//# sourceMappingURL=CommandQL.js.map

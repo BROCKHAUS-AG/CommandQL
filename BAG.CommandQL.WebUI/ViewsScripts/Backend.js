@@ -15,6 +15,7 @@ var BAG;
         BackendApp.prototype.changeState = function () {
         };
         return BackendApp;
-    }());
+    })();
     BAG.BackendApp = BackendApp;
 })(BAG || (BAG = {}));
+//# sourceMappingURL=Backend.js.map

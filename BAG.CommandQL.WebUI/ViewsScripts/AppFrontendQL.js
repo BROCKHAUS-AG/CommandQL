@@ -82,6 +82,7 @@ var BAG;
             $(".ping").append(data + "<br/>");
         };
         return AppFrontendQL;
-    }());
+    })();
     BAG.AppFrontendQL = AppFrontendQL;
 })(BAG || (BAG = {}));
+//# sourceMappingURL=AppFrontendQL.js.map

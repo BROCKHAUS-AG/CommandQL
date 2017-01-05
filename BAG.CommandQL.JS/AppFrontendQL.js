@@ -62,26 +62,27 @@ var BAG;
             });
             that.cmdQL.poll();
         };
-        AppFrontendQL.prototype.send = function (message) {
+        AppFrontendQL.prototype.send = function (messageText) {
             var that = this;
             that.cmdQL.invoke("setLiveChatMessage", [{
                     "id": that.cmdQL.newGuid(),
                     "liveChatChannelId": that.liveChatChannel.id,
-                    "message": message,
+                    "message": messageText,
                     "userName": that.userName
                 }], function (data) {
-                that.cmdQL.subscribe("getLiveChatMessage", [{ "liveChatMessageId": data.liveChatMessage.id }], function (data) {
-                    that.cmdQL.unsubscribe("getLiveChatMessage", [{ "liveChatMessageId": data.liveChatMessage.id }]);
-                });
+                //that.cmdQL.subscribe("getLiveChatMessage", [{ "liveChatMessageId": data.liveChatMessage.id }],
+                //    function (data) {
+                //        that.cmdQL.unsubscribe("getLiveChatMessage", [{ "liveChatMessageId": data.liveChatMessage.id }]);
+                //    });
             });
-            $(".chatMessages").append("me: " + message + "<br/>");
+            $(".chatMessages").append("me: " + messageText + "<br/>");
         };
         AppFrontendQL.prototype.ping = function (data) {
             console.log(data);
             $(".ping").append(data + "<br/>");
         };
         return AppFrontendQL;
-    }());
+    })();
     BAG.AppFrontendQL = AppFrontendQL;
 })(BAG || (BAG = {}));
 //# sourceMappingURL=AppFrontendQL.js.map
