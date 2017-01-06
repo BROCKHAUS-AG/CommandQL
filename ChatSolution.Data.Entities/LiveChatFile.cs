@@ -9,7 +9,7 @@ namespace ChatSolution.Data.Entities
     public class LiveChatFile : IDbEntity, IScopable
     {
                 /// <summary>
-        /// Initializes a new instance of the <see cref="LiveChatRule"/> class.
+        /// Initializes a new instance of the <see cref="LiveChatFile"/> class.
         /// </summary>
         public LiveChatFile()
         {

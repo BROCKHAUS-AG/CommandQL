@@ -292,7 +292,13 @@ var BROCKHAUSAG;
             return result;
         };
         return CommandQL;
+<<<<<<< HEAD
     }());
     BROCKHAUSAG.CommandQL = CommandQL;
 })(BROCKHAUSAG || (BROCKHAUSAG = {}));
+=======
+    })();
+    BAG.CommandQL = CommandQL;
+})(BAG || (BAG = {}));
+>>>>>>> 1c919fe0ba967bc61a647dde3d3085db9d675968
 //# sourceMappingURL=CommandQL.js.map

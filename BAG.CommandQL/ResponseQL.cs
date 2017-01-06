@@ -20,6 +20,9 @@ namespace BAG.CommandQL
 
         
         public List<string> Errors { get; set; }
+
+        //Time-Durration ms
+        public int T { get; set; }
     }
 
     //[JsonArray]

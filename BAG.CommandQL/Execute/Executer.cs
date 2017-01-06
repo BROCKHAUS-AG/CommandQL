@@ -22,11 +22,12 @@ namespace BAG.CommandQL.Execute
         {
             var type = Handler.GetType();
             var methods = type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-
+            var globalDateTime = DateTime.Now;
             foreach (var cmd in request.Commands)
             {
                 await Task.Run(() =>
                 {
+                    var durationDateTime = DateTime.Now;
                     var name = cmd.Name.ToLowerInvariant();
                     var mi = methods.FirstOrDefault(m => m.Name.ToLowerInvariant() == name);
                     if (mi != null)
@@ -45,44 +46,14 @@ namespace BAG.CommandQL.Execute
                     {
                         cmd.Errors.Add(cmd.Name + " - Command not found");
                     }
+                    cmd.T = (DateTime.Now-durationDateTime).Milliseconds;
                 });
             }
 
-            return request.CreateResponse();
-        }
-
-
-        //public List<object> CreateParameters(object parameter, MethodInfo mi)
-        //{
-        //    List<object> result = new List<object>();
-        //    var miAnalyser = new MethodInfoAnalyzer(mi);
-        //    for (int i = 0; i < miAnalyser.Parameters.Count; i++)
-        //    {
-        //        var miap = miAnalyser.Parameters[i];
-
-        //        if (parameter != null)
-        //        {
-        //            var json = JsonConvert.SerializeObject(parameter);
-        //            var desObj = JsonConvert.DeserializeObject(json, miap.ParameterType);
-        //            result.Add(desObj);
-        //        }
-        //        else
-        //        {
-        //            if (miap.ParameterType == typeof(string))
-        //            {
-        //                var obj = Activator.CreateInstance(miap.ParameterType, string.Empty);
-        //                //set value
-        //                result.Add(obj);
-        //            }
-        //            else
-        //            {
-        //                var obj = Activator.CreateInstance(miap.ParameterType);
-        //                result.Add(obj);
-        //            }
-        //        }
-        //    }
-        //    return result;
-        //}
+            var result= request.CreateResponse();
+            result.T = (DateTime.Now-globalDateTime).Milliseconds;
+            return result;
+        }     
 
         public List<object> CreateParameters(List<ParameterQL> parameters, MethodInfo mi)
         {
