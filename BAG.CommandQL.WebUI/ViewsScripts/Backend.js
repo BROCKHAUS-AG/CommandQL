@@ -15,13 +15,6 @@ var BROCKHAUSAG;
         BackendApp.prototype.changeState = function () {
         };
         return BackendApp;
-<<<<<<< HEAD
-    }());
+    })();
     BROCKHAUSAG.BackendApp = BackendApp;
 })(BROCKHAUSAG || (BROCKHAUSAG = {}));
-=======
-    })();
-    BAG.BackendApp = BackendApp;
-})(BAG || (BAG = {}));
->>>>>>> 1c919fe0ba967bc61a647dde3d3085db9d675968
-//# sourceMappingURL=Backend.js.map

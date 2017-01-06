@@ -7,6 +7,7 @@ using BAG.CommandQL;
 using BAG.CommandQL.Analyze;
 using Newtonsoft.Json;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace BAG.CommandQL.Execute
 {
@@ -20,38 +21,41 @@ namespace BAG.CommandQL.Execute
 
         public async Task<ResponseQL> Execute(RequestQL request)
         {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
             var type = Handler.GetType();
             var methods = type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-            var globalDateTime = DateTime.Now;
-            foreach (var cmd in request.Commands)
-            {
-                await Task.Run(() =>
-                {
-                    var durationDateTime = DateTime.Now;
-                    var name = cmd.Name.ToLowerInvariant();
-                    var mi = methods.FirstOrDefault(m => m.Name.ToLowerInvariant() == name);
-                    if (mi != null)
-                    {
-                        try
-                        {
-                            var parameters = CreateParameters(cmd.Parameters, mi);
-                            cmd.Return = mi.Invoke(Handler, parameters.ToArray());
-                        }
-                        catch (Exception ex)
-                        {
-                            cmd.Errors.Add(cmd.Name + " - " + ex.Message + " - " + ex.ToString());
-                        }
-                    }
-                    else
-                    {
-                        cmd.Errors.Add(cmd.Name + " - Command not found");
-                    }
-                    cmd.T = (DateTime.Now-durationDateTime).Milliseconds;
-                });
-            }
 
-            var result= request.CreateResponse();
-            result.T = (DateTime.Now-globalDateTime).Milliseconds;
+            Parallel.ForEach(request.Commands, (cmd) =>
+            {
+                Stopwatch stopwatchmethod = Stopwatch.StartNew();
+                var name = cmd.Name.ToLowerInvariant();
+                var mi = methods.FirstOrDefault(m => m.Name.ToLowerInvariant() == name);
+                if (mi != null)
+                {
+                    try
+                    {
+                        var parameters = CreateParameters(cmd.Parameters, mi);
+                        cmd.Return = mi.Invoke(Handler, parameters.ToArray());
+
+                    }
+                    catch (Exception ex)
+                    {
+                        cmd.Errors.Add(cmd.Name + " - " + ex.Message + " - " + ex.ToString());
+                    }
+                }
+                else
+                {
+                    cmd.Errors.Add(cmd.Name + " - Command not found");
+                }
+
+                stopwatchmethod.Stop();
+                cmd.T = stopwatch.ElapsedMilliseconds;
+            });
+
+            ResponseQL result = request.CreateResponse();
+            stopwatch.Stop();
+            result.T = stopwatch.ElapsedMilliseconds;
             return result;
         }     
 

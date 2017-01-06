@@ -96,7 +96,6 @@
                         html += '<a onclick="callSetChatSession(\'' + element.id + '\');return false;">' + element.userName + ' - accept</a><br/>';
                     });
                     $(".requests").html(html);
-                    console.log(data);
                 });
 
             cmdQL.subscribe("getLiveChatChannels", [{ "applicationUserId": applicationUserId }],
@@ -108,7 +107,6 @@
                         html += element.name + '<br/>';
                     });
                     $(".chatSessions").html(html);
-                    console.log(data);
                 });
 
 
@@ -148,8 +146,7 @@
                     });
                     if (html) {
                         $(".chatMessages").append(html);
-                    }
-                    console.log(data);
+                    }        
                 });
 
                 });
@@ -190,14 +187,12 @@
             if (html) {
                 $(".chatMessages").append(html);
             }
-            console.log(data);
         }
 
 
 
         function ping(data) {
             $(".ping").append(data + "<br/>");
-            console.log(data);
         }
 
         

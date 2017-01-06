@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -39,6 +40,7 @@ namespace BAG.CommandQL.WebUI.Controllers.Hub
 
         public async Task<string> Ping(PingRequest req)
         {
+            //Thread.Sleep(10);
             return await Task.FromResult(DateTime.Now.ToString());
         }
 

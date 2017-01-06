@@ -42,6 +42,6 @@ namespace BAG.CommandQL
         public string Channel { get; set; }
 
         //Time-Durration ms
-        public int T { get; set; }
+        public long T { get; set; }
     }
 }
