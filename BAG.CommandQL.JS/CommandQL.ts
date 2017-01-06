@@ -1,7 +1,7 @@
 ﻿// BROCKHAUS AG 2017
 // Paul Mizel
 
-module BAG {
+module BROCKHAUSAG {
     enum Status { None, Connected, Disconnected };
     enum LoggingType { Info, Debug, Error, Warn };
 

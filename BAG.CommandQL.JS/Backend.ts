@@ -1,4 +1,4 @@
-﻿module BAG {
+﻿module BROCKHAUSAG {
     export interface ILiveChatBase {
         id: string;
         status: number;

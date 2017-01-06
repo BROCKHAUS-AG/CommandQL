@@ -1,4 +1,7 @@
-﻿module BAG {
+﻿// BROCKHAUS AG 2017
+// Paul Mizel
+
+module BROCKHAUSAG {
 
     export class AppFrontendQL {
         public cmdQL: CommandQL;

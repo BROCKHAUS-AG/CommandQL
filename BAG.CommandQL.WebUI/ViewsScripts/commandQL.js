@@ -1,7 +1,7 @@
 // BROCKHAUS AG 2017
 // Paul Mizel
-var BAG;
-(function (BAG) {
+var BROCKHAUSAG;
+(function (BROCKHAUSAG) {
     var Status;
     (function (Status) {
         Status[Status["None"] = 0] = "None";
@@ -293,5 +293,6 @@ var BAG;
         };
         return CommandQL;
     }());
-    BAG.CommandQL = CommandQL;
-})(BAG || (BAG = {}));
+    BROCKHAUSAG.CommandQL = CommandQL;
+})(BROCKHAUSAG || (BROCKHAUSAG = {}));
+//# sourceMappingURL=CommandQL.js.map

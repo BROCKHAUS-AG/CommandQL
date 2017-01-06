@@ -1,8 +1,10 @@
-var BAG;
-(function (BAG) {
+// BROCKHAUS AG 2017
+// Paul Mizel
+var BROCKHAUSAG;
+(function (BROCKHAUSAG) {
     var AppFrontendQL = (function () {
         function AppFrontendQL(settings) {
-            this.cmdQL = new BAG.CommandQL(settings);
+            this.cmdQL = new BROCKHAUSAG.CommandQL(settings);
             this.liveChatMessages = [];
         }
         AppFrontendQL.prototype.init = function (groupId) {
@@ -83,5 +85,6 @@ var BAG;
         };
         return AppFrontendQL;
     }());
-    BAG.AppFrontendQL = AppFrontendQL;
-})(BAG || (BAG = {}));
+    BROCKHAUSAG.AppFrontendQL = AppFrontendQL;
+})(BROCKHAUSAG || (BROCKHAUSAG = {}));
+//# sourceMappingURL=AppFrontendQL.js.map

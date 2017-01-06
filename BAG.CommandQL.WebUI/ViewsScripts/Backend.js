@@ -1,8 +1,8 @@
-var BAG;
-(function (BAG) {
+var BROCKHAUSAG;
+(function (BROCKHAUSAG) {
     var BackendApp = (function () {
         function BackendApp(settings) {
-            this.cmdQL = new BAG.CommandQL(settings);
+            this.cmdQL = new BROCKHAUSAG.CommandQL(settings);
             this.cmdQL.connect();
         }
         BackendApp.prototype.run = function () {
@@ -16,5 +16,6 @@ var BAG;
         };
         return BackendApp;
     }());
-    BAG.BackendApp = BackendApp;
-})(BAG || (BAG = {}));
+    BROCKHAUSAG.BackendApp = BackendApp;
+})(BROCKHAUSAG || (BROCKHAUSAG = {}));
+//# sourceMappingURL=Backend.js.map

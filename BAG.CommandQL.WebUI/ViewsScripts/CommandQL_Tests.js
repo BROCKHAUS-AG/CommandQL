@@ -7,7 +7,7 @@ describe("CommandQLTests", function () {
 
     it("commands init", function () {
 
-        var cmdQL = new BAG.CommandQL({});
+        var cmdQL = new BROCKHAUSAG.CommandQL({});
 
         expect(cmdQL.commands).toEqual([]);
     });
@@ -15,7 +15,7 @@ describe("CommandQLTests", function () {
 
     it("will subscribe and unsobscribe 123", function () {
 
-        var cmdQL = new BAG.CommandQL({});
+        var cmdQL = new BROCKHAUSAG.CommandQL({});
 
         cmdQL.subscribe("cmd", { "key": "123" });
         cmdQL.unsubscribe("cmd", { "key": "123" });
@@ -25,7 +25,7 @@ describe("CommandQLTests", function () {
 
     it("will subscribe and unsobscribe 123 but 321 stay", function () {
 
-        var cmdQL = new BAG.CommandQL({});
+        var cmdQL = new BROCKHAUSAG.CommandQL({});
 
         cmdQL.subscribe("cmd", { "key": "321" });
         cmdQL.subscribe("cmd", { "key": "123" });
@@ -36,7 +36,7 @@ describe("CommandQLTests", function () {
     });
 
     it("will invoke function 3 stay", function () {
-        var cmdQL = new BAG.CommandQL({});
+        var cmdQL = new BROCKHAUSAG.CommandQL({});
         var index = 0;
 
         cmdQL.invoke("cmd",
@@ -58,7 +58,7 @@ describe("CommandQLTests", function () {
     });
 
     it("_find command in commands", function () {
-        var cmdQL = new BAG.CommandQL({});
+        var cmdQL = new BROCKHAUSAG.CommandQL({});
         var index = 0;
 
         cmdQL.subscribe("cmd",null);
