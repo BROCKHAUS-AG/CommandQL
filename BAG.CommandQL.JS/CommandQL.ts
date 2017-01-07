@@ -45,7 +45,12 @@ module BROCKHAUSAG {
             if (settings.serverpath) {
                 this.serverpath = settings.serverpath;
             } else {
-                this.serverpath = window.location.origin + "/api/commandQL/";
+                if (window.location["origin"]) {
+                    this.serverpath = window.location["origin"] + "/api/commandQL/";
+                }
+                else {
+                    this.serverpath = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + "/api/commandQL/";
+                }
             }
             //handler
             if (settings.handler) {
@@ -75,10 +80,15 @@ module BROCKHAUSAG {
             }
         }
 
+        public publish(cmd: string, data: any, success?: Function, error?: Function) {
+            let that = this;
+            that._log("publish " + cmd, data, LoggingType.Info);
+            that.invoke(cmd, data, success, error);
+        }
 
         public subscribe(cmd: string, data: any, success?: Function, error?: Function) {
             let that = this;
-            that._log("subscribe " + cmd, LoggingType.Info);
+            that._log("subscribe " + cmd, data, LoggingType.Info);
             that.commands.push({
                 "name": cmd,
                 "parameters": data,
@@ -87,16 +97,12 @@ module BROCKHAUSAG {
             });
         }
 
-        public publish(cmd: string, data: any, success?: Function, error?: Function) {
-            let that = this;
-            that._log("publish " + cmd);
-            that.invoke(cmd, data, success, error);
-        }
+
 
         public unsubscribe(cmd: string, data?: any) {
             let that = this;
             if (data) {
-                that._log("unsubscribe " + cmd + " data: " + JSON.stringify(data));
+                that._log("unsubscribe " + cmd, data, LoggingType.Info);
                 for (var i = that.commands.length - 1; i >= 0; i--) {
                     if (that.commands[i].name === cmd) {
                         var parameters = this.commands[i].parameters;
@@ -104,37 +110,37 @@ module BROCKHAUSAG {
                             console.log(k + " = " + v);
                             if (parameters[k] == v) {
                                 that.commands.splice(i, 1);
-                                that._log("unsubscribed " + cmd + " data: " + JSON.stringify(data));
+                                that._log("unsubscribed " + cmd, data, LoggingType.Info);
                             }
                         });
                     }
                 }
             } else {
-                that._log("unsubscribe " + cmd);
+                that._log("unsubscribe " + cmd, null, LoggingType.Info);
                 for (let i = that.commands.length - 1; i >= 0; i--) {
                     if (that.commands[i].name === cmd) {
                         that.commands.splice(i, 1);
-                        that._log("unsubscribed " + cmd);
+                        that._log("unsubscribed " + cmd, null, LoggingType.Info);
                     }
                 }
             }
         }
 
         public unsubscribeAll() {
-            this._log("unsubscribeAll");
+            this._log("unsubscribeAll", null, LoggingType.Info);
             for (let i = this.commands.length - 1; i >= 0; i--) {
                 this.commands.splice(i, 1);
             }
         }
 
         public connect() {
-            this._log("connect");
+            this._log("connect", null, LoggingType.Info);
             this.status = Status.Connected;
             return "connect";
         }
 
         public disconnect() {
-            this._log("disconnect");
+            this._log("disconnect", null, LoggingType.Info);
             this.status = Status.Disconnected;
             return "disconnect";
         }
@@ -142,25 +148,33 @@ module BROCKHAUSAG {
         public poll(success?: Function, error?: Function) {
             let that = this;
             if (that.status == Status.None) {
-                that._log("don't call pull before connect.", LoggingType.Error);
+                that._log("don't call pull before connect.(None)", null, LoggingType.Error);
                 return 400;
             }
             if (that.status == Status.Disconnected) {
-                that._log("don't call pull before connect.", LoggingType.Error);
+                that._log("don't call pull before connect.(Disconnected)", null, LoggingType.Info);
                 return 300;
             }
             let pollData = {
                 "sender": that.sender,
                 "commands": that.commands
             };
-            var completeFn = () => setTimeout(function () { that.poll() }, that.completeTimeout);
+            var completeFn = () => setTimeout(function () { that.poll(); }, that.completeTimeout);
             that._ajax(pollData, success, error, completeFn);
             return 200;
         }
 
         public invoke(cmd: string, data: any, success?: Function, error?: Function) {
             let that = this;
-            that._log("invoke " + cmd + " data " + JSON.stringify(data));
+            if (that.status == Status.None) {
+                that._log("don't call invoke before connect.(None)", null, LoggingType.Error);
+                return 400;
+            }
+            if (that.status == Status.Disconnected) {
+                that._log("don't call invoke before connect.(Disconnected)", null, LoggingType.Info);
+                return 300;
+            }
+            that._log("invoke " + cmd, data, LoggingType.Info);
             let invokeData = {
                 "sender": that.sender,
                 "commands": [{
@@ -173,7 +187,7 @@ module BROCKHAUSAG {
 
         private _ajax(ajaxData: any, success?: Function, error?: Function, completeFn?: any) {
             let that = this;
-            that._log("_ajax");
+            that._log("_ajax", ajaxData, LoggingType.Info);
 
             let clonedObj: any = {
                 sender: ajaxData.sender,
@@ -216,7 +230,7 @@ module BROCKHAUSAG {
 
         private _success(that: CommandQL, data, success: Function) {
             //Update
-            that._log("_success " + JSON.stringify(data));
+            that._log("_success " + (data.t)+"ms", data, LoggingType.Info);
             $.each(data.commands, function (index, cmd) {
 
                 if (typeof success === "function") {
@@ -236,7 +250,7 @@ module BROCKHAUSAG {
                         fnHandler = that.handler[cmd.name];
                     }
                     if (typeof fnHandler === 'function') {
-                        that._log("call " + cmd.name + " (" + JSON.stringify(cmd.return) + ")");
+                        that._log("call " + cmd.name, cmd.return, LoggingType.Info);
                         //fnHandler(cmd.return);
                         if (cmd.return && cmd.return.result) {
                             fnHandler(cmd.return.result);
@@ -251,12 +265,13 @@ module BROCKHAUSAG {
 
                 let fnOnComplete = that.handler["onComplete"];
                 if (typeof fnOnComplete === 'function') {
-                    that._log("call onComplete(data," + cmd.name + ")");
                     //fnOnComplete(cmd.return, cmd.name);
                     if (cmd.return && cmd.return.result) {
+                        that._log("call onComplete(data," + cmd.name + ")", cmd.return.result, LoggingType.Info);
                         fnOnComplete(cmd.return.result, cmd.name);
                     }
                     else {
+                        that._log("call onComplete(data," + cmd.name + ")", cmd.return, LoggingType.Info);
                         fnOnComplete(cmd.return, cmd.name);
                     }
                 }
@@ -264,14 +279,14 @@ module BROCKHAUSAG {
         }
 
         private _error(that: CommandQL, xhr, textStatus, errorThrown, error: Function) {
-            that._log("_error " + textStatus);
+            that._log("_error " + textStatus, errorThrown, LoggingType.Info);
             if (typeof error === "function") {
                 error(xhr, textStatus, errorThrown);
             }
 
             let fnOnError = that.handler["onError"];
             if (typeof fnOnError === 'function') {
-                that._log("call onError-" + textStatus);
+                that._log("call onError-" + textStatus, errorThrown, LoggingType.Info);
                 fnOnError(xhr, textStatus, errorThrown);
             }
         }
@@ -281,16 +296,19 @@ module BROCKHAUSAG {
                 loggingType = this.loggingType;
             }
             if (loggingType == LoggingType.Info) {
-                console.info(msg, obj || {});
+                console.info(msg); //, obj || {}
+                if (obj && (<any>console).table) {
+                    (<any>console).table(obj);
+                }
             }
             if (loggingType == LoggingType.Debug) {
-                console.log(msg, obj || {});
+                console.log(msg);//, obj || {}
             }
             if (loggingType == LoggingType.Error) {
-                console.error(msg, obj || {});
+                console.error(msg); //, obj || {}
             }
             if (loggingType == LoggingType.Warn) {
-                console.warn(msg, obj || {});
+                console.warn(msg); //, obj || {}
             }
         }
 

@@ -41,7 +41,12 @@ var BROCKHAUSAG;
                 this.serverpath = settings.serverpath;
             }
             else {
-                this.serverpath = window.location.origin + "/api/commandQL/";
+                if (window.location["origin"]) {
+                    this.serverpath = window.location["origin"] + "/api/commandQL/";
+                }
+                else {
+                    this.serverpath = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + "/api/commandQL/";
+                }
             }
             //handler
             if (settings.handler) {
@@ -72,9 +77,14 @@ var BROCKHAUSAG;
                 this.loggingType = settings.loggingType;
             }
         }
+        CommandQL.prototype.publish = function (cmd, data, success, error) {
+            var that = this;
+            that._log("publish " + cmd, data, LoggingType.Info);
+            that.invoke(cmd, data, success, error);
+        };
         CommandQL.prototype.subscribe = function (cmd, data, success, error) {
             var that = this;
-            that._log("subscribe " + cmd, LoggingType.Info);
+            that._log("subscribe " + cmd, data, LoggingType.Info);
             that.commands.push({
                 "name": cmd,
                 "parameters": data,
@@ -82,15 +92,10 @@ var BROCKHAUSAG;
                 "error": error
             });
         };
-        CommandQL.prototype.publish = function (cmd, data, success, error) {
-            var that = this;
-            that._log("publish " + cmd);
-            that.invoke(cmd, data, success, error);
-        };
         CommandQL.prototype.unsubscribe = function (cmd, data) {
             var that = this;
             if (data) {
-                that._log("unsubscribe " + cmd + " data: " + JSON.stringify(data));
+                that._log("unsubscribe " + cmd, data, LoggingType.Info);
                 for (var i = that.commands.length - 1; i >= 0; i--) {
                     if (that.commands[i].name === cmd) {
                         var parameters = this.commands[i].parameters;
@@ -98,46 +103,46 @@ var BROCKHAUSAG;
                             console.log(k + " = " + v);
                             if (parameters[k] == v) {
                                 that.commands.splice(i, 1);
-                                that._log("unsubscribed " + cmd + " data: " + JSON.stringify(data));
+                                that._log("unsubscribed " + cmd, data, LoggingType.Info);
                             }
                         });
                     }
                 }
             }
             else {
-                that._log("unsubscribe " + cmd);
+                that._log("unsubscribe " + cmd, null, LoggingType.Info);
                 for (var i_1 = that.commands.length - 1; i_1 >= 0; i_1--) {
                     if (that.commands[i_1].name === cmd) {
                         that.commands.splice(i_1, 1);
-                        that._log("unsubscribed " + cmd);
+                        that._log("unsubscribed " + cmd, null, LoggingType.Info);
                     }
                 }
             }
         };
         CommandQL.prototype.unsubscribeAll = function () {
-            this._log("unsubscribeAll");
+            this._log("unsubscribeAll", null, LoggingType.Info);
             for (var i = this.commands.length - 1; i >= 0; i--) {
                 this.commands.splice(i, 1);
             }
         };
         CommandQL.prototype.connect = function () {
-            this._log("connect");
+            this._log("connect", null, LoggingType.Info);
             this.status = Status.Connected;
             return "connect";
         };
         CommandQL.prototype.disconnect = function () {
-            this._log("disconnect");
+            this._log("disconnect", null, LoggingType.Info);
             this.status = Status.Disconnected;
             return "disconnect";
         };
         CommandQL.prototype.poll = function (success, error) {
             var that = this;
             if (that.status == Status.None) {
-                that._log("don't call pull before connect.", LoggingType.Error);
+                that._log("don't call pull before connect.(None)", null, LoggingType.Error);
                 return 400;
             }
             if (that.status == Status.Disconnected) {
-                that._log("don't call pull before connect.", LoggingType.Error);
+                that._log("don't call pull before connect.(Disconnected)", null, LoggingType.Info);
                 return 300;
             }
             var pollData = {
@@ -150,7 +155,15 @@ var BROCKHAUSAG;
         };
         CommandQL.prototype.invoke = function (cmd, data, success, error) {
             var that = this;
-            that._log("invoke " + cmd + " data " + JSON.stringify(data));
+            if (that.status == Status.None) {
+                that._log("don't call invoke before connect.(None)", null, LoggingType.Error);
+                return 400;
+            }
+            if (that.status == Status.Disconnected) {
+                that._log("don't call invoke before connect.(Disconnected)", null, LoggingType.Info);
+                return 300;
+            }
+            that._log("invoke " + cmd, data, LoggingType.Info);
             var invokeData = {
                 "sender": that.sender,
                 "commands": [{
@@ -162,7 +175,7 @@ var BROCKHAUSAG;
         };
         CommandQL.prototype._ajax = function (ajaxData, success, error, completeFn) {
             var that = this;
-            that._log("_ajax");
+            that._log("_ajax", ajaxData, LoggingType.Info);
             var clonedObj = {
                 sender: ajaxData.sender,
                 commands: []
@@ -203,7 +216,7 @@ var BROCKHAUSAG;
         };
         CommandQL.prototype._success = function (that, data, success) {
             //Update
-            that._log("_success " + JSON.stringify(data));
+            that._log("_success " + (data.t) + "ms", data, LoggingType.Info);
             $.each(data.commands, function (index, cmd) {
                 if (typeof success === "function") {
                     if (cmd.return && cmd.return.result) {
@@ -223,7 +236,7 @@ var BROCKHAUSAG;
                         fnHandler = that.handler[cmd.name];
                     }
                     if (typeof fnHandler === 'function') {
-                        that._log("call " + cmd.name + " (" + JSON.stringify(cmd.return) + ")");
+                        that._log("call " + cmd.name, cmd.return, LoggingType.Info);
                         //fnHandler(cmd.return);
                         if (cmd.return && cmd.return.result) {
                             fnHandler(cmd.return.result);
@@ -238,25 +251,26 @@ var BROCKHAUSAG;
                 }
                 var fnOnComplete = that.handler["onComplete"];
                 if (typeof fnOnComplete === 'function') {
-                    that._log("call onComplete(data," + cmd.name + ")");
                     //fnOnComplete(cmd.return, cmd.name);
                     if (cmd.return && cmd.return.result) {
+                        that._log("call onComplete(data," + cmd.name + ")", cmd.return.result, LoggingType.Info);
                         fnOnComplete(cmd.return.result, cmd.name);
                     }
                     else {
+                        that._log("call onComplete(data," + cmd.name + ")", cmd.return, LoggingType.Info);
                         fnOnComplete(cmd.return, cmd.name);
                     }
                 }
             });
         };
         CommandQL.prototype._error = function (that, xhr, textStatus, errorThrown, error) {
-            that._log("_error " + textStatus);
+            that._log("_error " + textStatus, errorThrown, LoggingType.Info);
             if (typeof error === "function") {
                 error(xhr, textStatus, errorThrown);
             }
             var fnOnError = that.handler["onError"];
             if (typeof fnOnError === 'function') {
-                that._log("call onError-" + textStatus);
+                that._log("call onError-" + textStatus, errorThrown, LoggingType.Info);
                 fnOnError(xhr, textStatus, errorThrown);
             }
         };
@@ -265,16 +279,19 @@ var BROCKHAUSAG;
                 loggingType = this.loggingType;
             }
             if (loggingType == LoggingType.Info) {
-                console.info(msg, obj || {});
+                console.info(msg); //, obj || {}
+                if (obj && console.table) {
+                    console.table(obj);
+                }
             }
             if (loggingType == LoggingType.Debug) {
-                console.log(msg, obj || {});
+                console.log(msg); //, obj || {}
             }
             if (loggingType == LoggingType.Error) {
-                console.error(msg, obj || {});
+                console.error(msg); //, obj || {}
             }
             if (loggingType == LoggingType.Warn) {
-                console.warn(msg, obj || {});
+                console.warn(msg); //, obj || {}
             }
         };
         CommandQL.prototype._find = function (obj, name, value) {
@@ -292,13 +309,7 @@ var BROCKHAUSAG;
             return result;
         };
         return CommandQL;
-<<<<<<< HEAD
-    }());
+    })();
     BROCKHAUSAG.CommandQL = CommandQL;
 })(BROCKHAUSAG || (BROCKHAUSAG = {}));
-=======
-    })();
-    BAG.CommandQL = CommandQL;
-})(BAG || (BAG = {}));
->>>>>>> 1c919fe0ba967bc61a647dde3d3085db9d675968
 //# sourceMappingURL=CommandQL.js.map

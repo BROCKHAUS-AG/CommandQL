@@ -84,13 +84,7 @@ var BROCKHAUSAG;
             $(".ping").append(data + "<br/>");
         };
         return AppFrontendQL;
-<<<<<<< HEAD
-    }());
+    })();
     BROCKHAUSAG.AppFrontendQL = AppFrontendQL;
 })(BROCKHAUSAG || (BROCKHAUSAG = {}));
-=======
-    })();
-    BAG.AppFrontendQL = AppFrontendQL;
-})(BAG || (BAG = {}));
->>>>>>> 1c919fe0ba967bc61a647dde3d3085db9d675968
 //# sourceMappingURL=AppFrontendQL.js.map
