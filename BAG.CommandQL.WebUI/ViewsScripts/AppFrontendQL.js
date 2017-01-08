@@ -87,3 +87,4 @@ var BROCKHAUSAG;
     })();
     BROCKHAUSAG.AppFrontendQL = AppFrontendQL;
 })(BROCKHAUSAG || (BROCKHAUSAG = {}));
+//# sourceMappingURL=AppFrontendQL.js.map

@@ -10,7 +10,7 @@ namespace BAG.CommandQL.Test.Execute
     public class ExecuterTest
     {
 
-        
+
 
         [TestMethod]
         public void TestExecuteCommands()
@@ -48,6 +48,29 @@ namespace BAG.CommandQL.Test.Execute
             Assert.AreEqual(cmd3.Return, "firstname lastname");
         }
 
+
+        ////[TestMethod]
+        ////public void TestExecuteTypeParametersCommand()
+        ////{
+        ////    var request = JsonConvert.DeserializeObject<RequestQL>(
+        ////    "{" +
+        ////    "  'commands': [                                               " +
+        ////    "    {                                                         " +
+        ////    "      'name': 'typeParameters',                               " +
+        ////    "      'parameters': ['string',10]                             " +
+        ////    "    }                                                         " +
+        ////    "  ]                                                           " +
+        ////    "}");
+
+        ////    Executer exec = new Executer(new Handler());
+        ////    var result = exec.Execute(request).Result;
+
+        ////    Assert.AreEqual(result.Commands.Count, 1);
+        ////    var cmd1 = result.Commands.FirstOrDefault();
+        ////    Assert.AreEqual(cmd1.Return, "string-10");           
+        ////}
+
+
         public class Handler
         {
             public EchoResponse Echo(EchoRequest req)
@@ -67,6 +90,12 @@ namespace BAG.CommandQL.Test.Execute
             {
                 return req1.Name + " " + req2.Name;
             }
+
+            public string TypeParameters(string req1, int req2)
+            {
+                return req1 + "-" + req2;
+            }
+
             public class EchoResponse : EchoRequest { }
             public class EchoRequest
             {

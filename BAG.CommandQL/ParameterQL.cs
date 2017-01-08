@@ -8,6 +8,5 @@ namespace BAG.CommandQL
 {
     public class ParameterQL : Dictionary<string, object>
     {
-
     }
 }

@@ -2,8 +2,9 @@
 // Paul Mizel
 
 module BROCKHAUSAG {
-    enum Status { None, Connected, Disconnected };
-    enum LoggingType { None, Info, Debug, Error, Warn, Sequence };
+
+    export enum Status { None, Connected, Disconnected, Poll };
+    export enum LoggingType { None, Info, Debug, Error, Warn, Sequence };
 
     export interface IConfigurationQL {
         serverpath?: string;
@@ -31,6 +32,8 @@ module BROCKHAUSAG {
         public token: string = "";
         public headers: any;
         public loggingType: LoggingType = LoggingType.Info;
+        public $request: any;
+        public $index: number = 0;
         // Constructor 
         constructor(settings: IConfigurationQL) {
             //timeout
@@ -83,18 +86,26 @@ module BROCKHAUSAG {
         public publish(cmd: string, data: any, success?: Function, error?: Function) {
             let that = this;
             that._log("publish " + cmd, data, LoggingType.Info);
-            that.invoke(cmd, data, success, error);
+            return that.invoke(cmd, data, success, error);
         }
 
         public subscribe(cmd: string, data: any, success?: Function, error?: Function) {
             let that = this;
             that._log("subscribe " + cmd, data, LoggingType.Info);
-            that.commands.push({
+            var command = {
                 "name": cmd,
                 "parameters": data,
                 "success": success,
                 "error": error
-            });
+            };
+            if (data.length > 0 && data[0]["counter"] && data[0]["counter"] > 0) {
+                command["counter"] = data[0]["counter"];
+            }
+            if (data.length > 0 && data[0]["each"] && data[0]["each"] > 1) {
+                command["each"] = data[0]["each"];
+            }
+            that.commands.push(command);
+            return this;
         }
 
 
@@ -124,6 +135,7 @@ module BROCKHAUSAG {
                     }
                 }
             }
+            return this;
         }
 
         public unsubscribeAll() {
@@ -131,35 +143,45 @@ module BROCKHAUSAG {
             for (let i = this.commands.length - 1; i >= 0; i--) {
                 this.commands.splice(i, 1);
             }
+            return this;
         }
 
         public connect() {
             this._log("connect", null, LoggingType.Info);
             this.status = Status.Connected;
-            return "connect";
+            return this;
         }
 
         public disconnect() {
             this._log("disconnect", null, LoggingType.Info);
             this.status = Status.Disconnected;
-            return "disconnect";
+            return this;
         }
 
-        public poll(success?: Function, error?: Function) {
+        public poll(success?: Function, error?: Function, ignoreCompleteFn?: boolean) {
             let that = this;
             if (that.status == Status.None) {
-                that._log("don't call pull before connect.(None)", null, LoggingType.Error);
+                that._log("don't call poll before connect.(None)", null, LoggingType.Error);
                 return 400;
             }
             if (that.status == Status.Disconnected) {
-                that._log("don't call pull before connect.(Disconnected)", null, LoggingType.Info);
+                that._log("don't call poll before connect.(Disconnected)", null, LoggingType.Info);
                 return 300;
             }
+            if (that.status == Status.Poll) {
+                that._log("don't call poll many times.(Poll)", null, LoggingType.Warn);
+                return 500;
+            }
+            that.status = Status.Poll;
+
             let pollData = {
                 "sender": that.sender,
                 "commands": that.commands
             };
-            var completeFn = () => setTimeout(function () { that.poll(); }, that.completeTimeout);
+            var completeFn = null;
+            if (!(ignoreCompleteFn && ignoreCompleteFn == true)) {
+                completeFn = () => setTimeout(function () { that.poll(success, error); }, that.completeTimeout);
+            }
             that._ajax(pollData, success, error, completeFn);
             return 200;
         }
@@ -183,6 +205,7 @@ module BROCKHAUSAG {
                 }]
             };
             that._ajax(invokeData, success, error, null);
+            return 200;
         }
 
         private _ajax(ajaxData: any, success?: Function, error?: Function, completeFn?: any) {
@@ -190,28 +213,42 @@ module BROCKHAUSAG {
             that._log("_ajax", ajaxData, LoggingType.Info);
 
             let clonedObj: any = {
+                index: that.$index++,
                 sender: ajaxData.sender,
                 commands: []
             };
-            $.each(ajaxData.commands, function (index, element) {
-                if (typeof element.parameters === 'function') {
-                    clonedObj.commands.push({
-                        "name": element.name,
-                        "parameters": (element.parameters()),
-                        "success": element.success,
-                        "error": element.error
-                    });
-                } else {
-                    clonedObj.commands.push({
-                        "name": element.name,
-                        "parameters": element.parameters,
-                        "success": element.success,
-                        "error": element.error
-                    });
-                }
-            });
 
-            $.ajax({
+            for (var i = ajaxData.commands.length - 1; i >= 0; i--) {
+                var element = ajaxData.commands[i];
+                if (element["counter"] && (--element.counter) == 0) {
+                    ajaxData.commands.splice(i, 1);
+                    continue;
+                }
+                if (!element["each"] || (element["each"] && (that.$index % element.each) == 0)) {
+                    if (typeof element.parameters === 'function') {
+                        clonedObj.commands.push({
+                            "name": element.name,
+                            "parameters": (element.parameters()),
+                            "success": element.success,
+                            "error": element.error
+                        });
+                    } else {
+                        clonedObj.commands.push({
+                            "name": element.name,
+                            "parameters": element.parameters,
+                            "success": element.success,
+                            "error": element.error
+                        });
+                    }
+                }
+            }
+
+            if (that.$request != null) {
+                that.$request.abort();
+                that.$request = null;
+            }
+
+            that.$request = $.ajax({
                 url: that.serverpath,
                 type: 'POST',
                 dataType: "json",
@@ -230,49 +267,56 @@ module BROCKHAUSAG {
 
         private _success(that: CommandQL, data, success: Function) {
             //Update
-            that._log("_success " + (data.t)+"ms", data, LoggingType.Info);
+            that._log("_success " + (data.t) + "ms", data, LoggingType.Info);
             $.each(data.commands, function (index, cmd) {
 
-                if (typeof success === "function") {
-                    if (cmd.return && cmd.return.result) {
-                        success(cmd.return.result);
-                    } else {
-                        success(cmd.return);
-                    }
+                if (cmd.errors && cmd.errors.length > 0) {//check if errors
+                    $.each(cmd.errors, function (index, err) {
+                        that._log("call " + cmd.name + " returns with error " + err, null, LoggingType.Warn);
+                    });
                 }
-                else {
-                    let fnHandler = null;
-                    var findedCommand = that._find(that.commands, "name", cmd.name);
-                    if (findedCommand && findedCommand.success) {
-                        fnHandler = findedCommand.success;
+                else { //without errors           
+                    if (typeof success === "function") {
+                        if (cmd.return && cmd.return.result) {
+                            success(cmd.return.result);
+                        } else {
+                            success(cmd.return);
+                        }
                     }
                     else {
-                        fnHandler = that.handler[cmd.name];
-                    }
-                    if (typeof fnHandler === 'function') {
-                        that._log("call " + cmd.name, cmd.return, LoggingType.Info);
-                        //fnHandler(cmd.return);
-                        if (cmd.return && cmd.return.result) {
-                            fnHandler(cmd.return.result);
+                        let fnHandler = null;
+                        var findedCommand = that._find(that.commands, "name", cmd.name);
+                        if (findedCommand && findedCommand.success) {
+                            fnHandler = findedCommand.success;
                         }
                         else {
-                            fnHandler(cmd.return);
+                            fnHandler = that.handler[cmd.name];
                         }
-                    } else {
-                        that._log("function " + cmd.name + " not found", null, LoggingType.Warn);
+                        if (typeof fnHandler === 'function') {
+                            that._log("call " + cmd.name, cmd.return, LoggingType.Info);
+                            //fnHandler(cmd.return);
+                            if (cmd.return && cmd.return.result) {
+                                fnHandler(cmd.return.result);
+                            }
+                            else {
+                                fnHandler(cmd.return);
+                            }
+                        } else {
+                            that._log("function " + cmd.name + " not found", null, LoggingType.Warn);
+                        }
                     }
-                }
 
-                let fnOnComplete = that.handler["onComplete"];
-                if (typeof fnOnComplete === 'function') {
-                    //fnOnComplete(cmd.return, cmd.name);
-                    if (cmd.return && cmd.return.result) {
-                        that._log("call onComplete(data," + cmd.name + ")", cmd.return.result, LoggingType.Info);
-                        fnOnComplete(cmd.return.result, cmd.name);
-                    }
-                    else {
-                        that._log("call onComplete(data," + cmd.name + ")", cmd.return, LoggingType.Info);
-                        fnOnComplete(cmd.return, cmd.name);
+                    let fnOnComplete = that.handler["onComplete"];
+                    if (typeof fnOnComplete === 'function') {
+                        //fnOnComplete(cmd.return, cmd.name);
+                        if (cmd.return && cmd.return.result) {
+                            that._log("call onComplete(data," + cmd.name + ")", cmd.return.result, LoggingType.Info);
+                            fnOnComplete(cmd.return.result, cmd.name);
+                        }
+                        else {
+                            that._log("call onComplete(data," + cmd.name + ")", cmd.return, LoggingType.Info);
+                            fnOnComplete(cmd.return, cmd.name);
+                        }
                     }
                 }
             });
