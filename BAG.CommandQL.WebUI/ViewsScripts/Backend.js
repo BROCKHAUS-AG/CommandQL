@@ -18,4 +18,3 @@ var BROCKHAUSAG;
     })();
     BROCKHAUSAG.BackendApp = BackendApp;
 })(BROCKHAUSAG || (BROCKHAUSAG = {}));
-//# sourceMappingURL=Backend.js.map

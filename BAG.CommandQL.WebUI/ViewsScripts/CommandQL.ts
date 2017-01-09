@@ -84,13 +84,13 @@ module BROCKHAUSAG {
         }
 
         public publish(cmd: string, data: any, success?: Function, error?: Function) {
-            let that = this;
+            var that = this;
             that._log("publish " + cmd, data, LoggingType.Info);
             return that.invoke(cmd, data, success, error);
         }
 
         public subscribe(cmd: string, data: any, success?: Function, error?: Function) {
-            let that = this;
+            var that = this;
             that._log("subscribe " + cmd, data, LoggingType.Info);
             var command = {
                 "name": cmd,
@@ -111,7 +111,7 @@ module BROCKHAUSAG {
 
 
         public unsubscribe(cmd: string, data?: any) {
-            let that = this;
+            var that = this;
             if (data) {
                 that._log("unsubscribe " + cmd, data, LoggingType.Info);
                 for (var i = that.commands.length - 1; i >= 0; i--) {
@@ -159,7 +159,7 @@ module BROCKHAUSAG {
         }
 
         public poll(success?: Function, error?: Function, ignoreCompleteFn?: boolean) {
-            let that = this;
+            var that = this;
             if (that.status == Status.None) {
                 that._log("don't call poll before connect.(None)", null, LoggingType.Error);
                 return 400;
@@ -174,7 +174,7 @@ module BROCKHAUSAG {
             }
             that.status = Status.Poll;
 
-            let pollData = {
+            var pollData = {
                 "sender": that.sender,
                 "commands": that.commands
             };
@@ -187,7 +187,7 @@ module BROCKHAUSAG {
         }
 
         public invoke(cmd: string, data: any, success?: Function, error?: Function) {
-            let that = this;
+            var that = this;
             if (that.status == Status.None) {
                 that._log("don't call invoke before connect.(None)", null, LoggingType.Error);
                 return 400;
@@ -197,7 +197,7 @@ module BROCKHAUSAG {
                 return 300;
             }
             that._log("invoke " + cmd, data, LoggingType.Info);
-            let invokeData = {
+            var invokeData = {
                 "sender": that.sender,
                 "commands": [{
                     "name": cmd,
@@ -209,10 +209,10 @@ module BROCKHAUSAG {
         }
 
         private _ajax(ajaxData: any, success?: Function, error?: Function, completeFn?: any) {
-            let that = this;
+            var that = this;
             that._log("_ajax", ajaxData, LoggingType.Info);
 
-            let clonedObj: any = {
+            var clonedObj: any = {
                 index: that.$index++,
                 sender: ajaxData.sender,
                 commands: []
@@ -284,7 +284,7 @@ module BROCKHAUSAG {
                         }
                     }
                     else {
-                        let fnHandler = null;
+                        var fnHandler = null;
                         var findedCommand = that._find(that.commands, "name", cmd.name);
                         if (findedCommand && findedCommand.success) {
                             fnHandler = findedCommand.success;
@@ -306,7 +306,7 @@ module BROCKHAUSAG {
                         }
                     }
 
-                    let fnOnComplete = that.handler["onComplete"];
+                    var fnOnComplete = that.handler["onComplete"];
                     if (typeof fnOnComplete === 'function') {
                         //fnOnComplete(cmd.return, cmd.name);
                         if (cmd.return && cmd.return.result) {
@@ -328,7 +328,7 @@ module BROCKHAUSAG {
                 error(xhr, textStatus, errorThrown);
             }
 
-            let fnOnError = that.handler["onError"];
+            var fnOnError = that.handler["onError"];
             if (typeof fnOnError === 'function') {
                 that._log("call onError-" + textStatus, errorThrown, LoggingType.Info);
                 fnOnError(xhr, textStatus, errorThrown);
@@ -336,7 +336,7 @@ module BROCKHAUSAG {
         }
 
         private _log(msg: string, obj?: any, loggingType?: LoggingType) {
-            let that = this;
+            var that = this;
             if (!loggingType) {
                 loggingType = that.loggingType;
             }

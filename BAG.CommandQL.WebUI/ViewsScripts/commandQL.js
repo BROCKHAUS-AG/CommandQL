@@ -355,4 +355,3 @@ var BROCKHAUSAG;
     })();
     BROCKHAUSAG.CommandQL = CommandQL;
 })(BROCKHAUSAG || (BROCKHAUSAG = {}));
-//# sourceMappingURL=CommandQL.js.map
