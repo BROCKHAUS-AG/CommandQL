@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BAG.CommandQL.Infrastructure;
+using BAG.CommandQL.WebUI.App_Start;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,6 +20,10 @@ namespace BAG.CommandQL.WebUI
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.RegisterCommandQL(new CommandQLConfiguration() {
+                Kernel = NinjectWebCommon.bootstrapper.Kernel
+            });
         }
     }
 }

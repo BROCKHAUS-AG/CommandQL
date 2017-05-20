@@ -76,11 +76,7 @@ describe("CommandQLTests", function () {
         expect(cmdQL.commands.length).toEqual(1);
         cmdQL.status = 1; //reset to connected, 
         cmdQL.poll(null, null, true);
-        expect(cmdQL.commands.length).toEqual(1);
-        cmdQL.status = 1; //reset to connected, 
-        cmdQL.poll(null, null, true);
         expect(cmdQL.commands.length).toEqual(0);
-
     });
 
     it("will subscribe with each 3 and call 3 time", function () {

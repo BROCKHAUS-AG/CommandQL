@@ -4,6 +4,7 @@
 
     var applicationUserId = Guid.Parse("14c1aeac-e911-4837-8fca-5b3264c819e9");
     var groupId = Guid.Parse("B7D4E718-A900-4A19-8543-D5E28F57F431");
+    var t = User;
 }
 <br />
 <div class="row">
@@ -59,10 +60,10 @@
 
 @section scripts{
 
-    <script src="~/ViewsScripts/CommandQL.js"></script>
+    <script src="~/commandQLScript/CommandQL.js"></script>
     <script>
         var applicationUserId = "@applicationUserId.ToString()";
-        var serverpath = window.location.origin + "/api/commandQL/";
+        var serverpath = window.location.origin + "/commandQL/";
         var liveChatChannel = null;
         var name = null;
         var currentMessages = [];
@@ -75,6 +76,18 @@
 
 
         $(function () {
+            cmdQL.subscribe("test.test", [], function (data) {
+                console.log(data);
+            });
+
+            cmdQL.subscribe("test.test1", [], function (data) {
+                console.log(data);
+            });
+
+            cmdQL.subscribe("test.StringInput", ["test", "test2"], function (data) {
+                console.log(data);
+            });
+
             cmdQL.subscribe("getApplicationUsers", [{ 'groupId': '@groupId.ToString()' }],
                 function (data) {
                     if (!data)

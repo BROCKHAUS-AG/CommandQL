@@ -1,5 +1,5 @@
-﻿using BAG.CommandQL.Analyze;
-
+﻿using BAG.CommandQL.Entities;
+using BAG.CommandQL.Infrastructure;
 using BAG.CommandQL.WebUI.Controllers.Hub;
 using Newtonsoft.Json.Linq;
 using System;
@@ -8,10 +8,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace BAG.CommandQL.WebUI.Controllers
-
 {
     [RoutePrefix("api/CommandQL")]
     public class CommandQLController : ApiController
@@ -19,21 +19,22 @@ namespace BAG.CommandQL.WebUI.Controllers
         // GET api/<controller>
         public object Get()
         {
-            return new Analyzer(new CommandQLHandler(System.Web.HttpContext.Current));
+            return CommandQL.HandlerInfos;
+            //return new Analyzer(new CommandQLHandler(System.Web.HttpContext.Current));
         }
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<ResponseQL> Post(JObject obj)
+        public async Task<CommandQLResponse> Post(JObject obj)
         {
-            ResponseQL response = null;
+            CommandQLResponse response = null;
             try
             {
-                var request = RequestQL.FromJObject(obj);
+                var request = CommandQLRequest.FromJObject(obj);
                 if (request != null)
                 {
-                    var exec = new Execute.Executer(new CommandQLHandler(System.Web.HttpContext.Current));
-                    response = await exec.Execute(request);
+                    var exec = new CommandQLExecuter(HttpContext.Current, new CommandQLHandlerBase());
+                    response = await exec.ExecuteAsync(request);
                 }
                 else
                 {
@@ -42,7 +43,7 @@ namespace BAG.CommandQL.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                response = new ResponseQL();
+                response = new CommandQLResponse();
                 response.Errors.Add(ex.Message);
                 response.Errors.Add(ex.ToString());
             }

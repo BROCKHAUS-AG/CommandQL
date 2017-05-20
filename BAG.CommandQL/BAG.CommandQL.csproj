@@ -30,14 +30,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.WebSockets, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WebSockets.0.2.3.1\lib\net45\Microsoft.WebSockets.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.2.0.0\lib\net45-full\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Routing" />
     <Reference Include="System.Workflow.Runtime" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,20 +54,38 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analyze\Analyzer.cs" />
-    <Compile Include="Analyze\MethodInfoAnalyzer.cs" />
-    <Compile Include="Analyze\PropertyInfoAnalyzer.cs" />
-    <Compile Include="Analyze\ParameterInfoAnalyzer.cs" />
+    <Compile Include="Analysis\CommandQLHandlerInfo.cs" />
+    <Compile Include="Analysis\CommandQLMethodInfo.cs" />
+    <Compile Include="Analysis\CommandQLParameterInfo.cs" />
+    <Compile Include="Analysis\CommandQLParameterPropertyInfo.cs" />
     <Compile Include="CommandQL.cs" />
-    <Compile Include="Execute\Executer.cs" />
-    <Compile Include="ParameterQL.cs" />
+    <Compile Include="CommandQLConfiguration.cs" />
+    <Compile Include="CommandQLExecuter.cs" />
+    <Compile Include="Infrastructure\CommandQLBasicAuthorizeAttribute.cs" />
+    <Compile Include="Infrastructure\ICommandQLAuthorizeAttribute.cs" />
+    <Compile Include="Infrastructure\CommandQLHandlerBase.cs" />
+    <Compile Include="Entities\CommandQLCommand.cs" />
+    <Compile Include="Entities\CommandQLNotification.cs" />
+    <Compile Include="Entities\CommandQLParameter.cs" />
+    <Compile Include="Entities\CommandQLRequest.cs" />
+    <Compile Include="Entities\CommandQLResponse.cs" />
+    <Compile Include="Helper\StringHelper.cs" />
+    <Compile Include="Infrastructure\Infrastructure.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestQL.cs" />
-    <Compile Include="ResponseQL.cs" />
+    <Compile Include="RouteHandler\CommandQLInfoRequestHandler.cs" />
+    <Compile Include="RouteHandler\CommandQLRequestHandler.cs" />
+    <Compile Include="RouteHandler\CommandQLInfoRouteHandler.cs" />
+    <Compile Include="RouteHandler\CommandQLRouteHandler.cs" />
+    <Compile Include="WebSocket\CommandQLWebSocketConnection.cs" />
+    <Compile Include="WebSocket\CommandQLWebSocketHandler.cs" />
+    <Compile Include="WebSocket\CommandQLWebSocketList.cs" />
+    <Compile Include="WebSocket\CommandQLWebSocketStorage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
