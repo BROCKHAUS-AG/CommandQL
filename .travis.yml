@@ -2,6 +2,7 @@ language: node_js
 node_js:
   - "node"
 before_script:
+  - cd BAG.CommandQL.JS
   - npm install -g gulp
 script:
   - gulp test
