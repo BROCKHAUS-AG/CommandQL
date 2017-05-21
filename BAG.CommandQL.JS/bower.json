@@ -1,0 +1,29 @@
+{
+  "name": "commandql",
+  "description": "CommandQL-Client for Typescript/Javascript",
+  "main": "dist/commandql.js",
+  "authors": [
+    "morrisjdev",
+    "pmizel"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "javascript",
+    "typescript",
+    "graphql",
+    "commandql"
+  ],
+  "homepage": "",
+  "ignore": [
+    ".vscode",
+    "bower_components",
+    "node_modules",
+    ".gitignore",
+    ".npmignore",
+    ".travis.yml",
+    "gulpfile.js"
+  ],
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}

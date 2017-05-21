@@ -60,7 +60,7 @@
 
 @section scripts{
 
-    <script src="~/commandQLScript/CommandQL.js"></script>
+    <script src="~/commandQLScript/commandql.js"></script>
     <script>
         var applicationUserId = "@applicationUserId.ToString()";
         var serverpath = window.location.origin + "/commandQL/";
@@ -71,24 +71,25 @@
         var cmdQL = new BROCKHAUSAG.CommandQL({
             handler: window,
             serverpath: serverpath,
-            sender: "backend"
+            sender: "backend",
+            useHttp: true
         });
 
 
         $(function () {
-            cmdQL.subscribe("test.test", [], function (data) {
+            cmdQL.subscribeCommand("test.test", [], function (data) {
                 console.log(data);
             });
 
-            cmdQL.subscribe("test.test1", [], function (data) {
+            cmdQL.subscribeCommand("test.test1", [], function (data) {
                 console.log(data);
             });
 
-            cmdQL.subscribe("test.StringInput", ["test", "test2"], function (data) {
+            cmdQL.subscribeCommand("test.StringInput", ["test", "test2"], function (data) {
                 console.log(data);
             });
 
-            cmdQL.subscribe("getApplicationUsers", [{ 'groupId': '@groupId.ToString()' }],
+            cmdQL.subscribeCommand("getApplicationUsers", [{ 'groupId': '@groupId.ToString()' }],
                 function (data) {
                     if (!data)
                         return;
@@ -99,8 +100,10 @@
                     $(".applicationUsers").html(html);
                 });
 
-            cmdQL.subscribe("ping", []);
-            cmdQL.subscribe("getLiveChatRequests", [{ "groupId": "@groupId.ToString()" }],
+            cmdQL.subscribeCommand("ping", [], function (result) {
+                console.log(result);
+            });
+            cmdQL.subscribeCommand("getLiveChatRequests", [{ "groupId": "@groupId.ToString()" }],
                 function (data) {
                     if (!data)
                         return;
@@ -111,7 +114,7 @@
                     $(".requests").html(html);
                 });
 
-            cmdQL.subscribe("getLiveChatChannels", [{ "applicationUserId": applicationUserId }],
+            cmdQL.subscribeCommand("getLiveChatChannels", [{ "applicationUserId": applicationUserId }],
                 function (data) {
                     if (!data)
                         return;
@@ -124,8 +127,7 @@
 
 
             
-            cmdQL.connect();
-            cmdQL.poll();
+            cmdQL.begin();
         });
 
 

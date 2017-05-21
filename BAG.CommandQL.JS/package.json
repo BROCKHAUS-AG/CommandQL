@@ -1,0 +1,33 @@
+{
+  "name": "commandql",
+  "version": "1.0.0",
+  "description": "CommandQL-Client for Typescript/Javascript",
+  "main": "dist/commandql.js",
+  "keywords": [
+    "javascript",
+    "typescript",
+    "graphql",
+    "commandql"
+  ],
+  "author": "morrisjdev",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jasmine": "^2.5.47",
+    "@types/jquery": "^2.0.41",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-jasmine": "^2.4.2",
+    "gulp-minify": "0.0.15",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-tslint": "^8.0.0",
+    "gulp-typescript": "^3.1.6",
+    "gulp-watch": "^4.3.11",
+    "merge2": "^1.0.3",
+    "tslint": "^5.1.0",
+    "typescript": "^2.2.2"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}

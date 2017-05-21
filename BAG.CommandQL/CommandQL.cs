@@ -3,6 +3,7 @@ using BAG.CommandQL.Entities;
 using BAG.CommandQL.Infrastructure;
 using BAG.CommandQL.WebSocket;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -81,5 +82,10 @@ namespace BAG.CommandQL
                 client.Send(data);
             }
         }
+
+        public static JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
     }
 }

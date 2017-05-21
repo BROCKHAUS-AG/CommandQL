@@ -61,6 +61,8 @@
     <Compile Include="CommandQL.cs" />
     <Compile Include="CommandQLConfiguration.cs" />
     <Compile Include="CommandQLExecuter.cs" />
+    <Compile Include="Entities\CommandQLWebsocketRequest.cs" />
+    <Compile Include="Entities\CommandQLWebsocketResponse.cs" />
     <Compile Include="Infrastructure\CommandQLBasicAuthorizeAttribute.cs" />
     <Compile Include="Infrastructure\ICommandQLAuthorizeAttribute.cs" />
     <Compile Include="Infrastructure\CommandQLHandlerBase.cs" />

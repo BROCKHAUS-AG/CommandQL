@@ -21,6 +21,5 @@ namespace BAG.CommandQL.Entities
         public List<string> Errors { get; set; }
 
         public long T { get; set; }
-
     }
 }

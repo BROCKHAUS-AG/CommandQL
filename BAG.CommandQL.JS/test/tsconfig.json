@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "alwaysStrict": true,
+        "target": "es5",
+        "outFile": "test.js"
+    },
+    "include": [
+        "../dist/commandql.d.ts",
+        "./**/*.ts"
+    ]
+}

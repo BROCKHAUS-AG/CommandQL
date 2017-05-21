@@ -36,6 +36,8 @@ namespace BAG.CommandQL.Entities
                 result.Commands.Add(new CommandQLCommand()
                 {
                     Name = cmd.Name,
+                    Id = cmd.Id,
+                    T = cmd.T,
 #if DEBUG
                     Parameters = cmd.Parameters,
 #endif

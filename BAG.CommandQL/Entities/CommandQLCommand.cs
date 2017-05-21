@@ -14,6 +14,8 @@ namespace BAG.CommandQL.Entities
             Errors = new List<string>();
         }
 
+        public string Id { get; set; }
+
         /// <summary>
         /// Command.Name = Handler.Method[Name]
         /// </summary>

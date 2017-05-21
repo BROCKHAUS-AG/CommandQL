@@ -48,7 +48,7 @@ namespace BAG.CommandQL.RouteHandler
                 {
                     if (context.Request.HttpMethod == "GET" && CommandQL.Configuration.EnableAnalyzer)
                     {
-                        string result = JsonConvert.SerializeObject(CommandQL.HandlerInfos);
+                        string result = JsonConvert.SerializeObject(CommandQL.HandlerInfos, CommandQL.serializerSettings);
 
                         context.Response.ContentType = "application/json";
                         context.Response.Write(result);
@@ -62,7 +62,7 @@ namespace BAG.CommandQL.RouteHandler
                         {
                             CommandQLResponse response = new CommandQLExecuter(context, CommandQL.CreateHandlerInstances(context)).Execute(request);
 
-                            string result = JsonConvert.SerializeObject(response);
+                            string result = JsonConvert.SerializeObject(response, CommandQL.serializerSettings);
 
                             context.Response.ContentType = "application/json";
                             context.Response.Write(result);
@@ -70,8 +70,9 @@ namespace BAG.CommandQL.RouteHandler
                         }
                         else
                         {
-                            context.Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
+                            context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
                             context.Response.Write("Error");
+                            return;
                         }
                     }
                 }

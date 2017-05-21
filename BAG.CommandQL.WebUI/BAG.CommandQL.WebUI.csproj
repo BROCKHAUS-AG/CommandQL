@@ -335,6 +335,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="chutzpah.json" />
+    <Content Include="wwwroot\ViewScripts\AppFrontendQL.js" />
     <None Include="wwwroot\Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="wwwroot\Scripts\jquery-1.10.2.js" />
     <Content Include="wwwroot\Scripts\jquery-1.10.2.min.js" />
@@ -365,11 +366,11 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
     <Content Include="Views\Home\Backend.cshtml" />
+    <Content Include="wwwroot\ViewScripts\AppFrontendQL.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Auth\" />
-    <Folder Include="wwwroot\ViewScripts\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="wwwroot\fonts\glyphicons-halflings-regular.woff" />

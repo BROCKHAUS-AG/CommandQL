@@ -1,0 +1,8 @@
+.vscode
+bower_components
+node_modules
+.gitignore
+.npmignore
+.travis.yml
+bower.json
+gulpfile.js

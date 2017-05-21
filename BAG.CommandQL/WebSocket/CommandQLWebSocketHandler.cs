@@ -1,5 +1,6 @@
 ﻿using BAG.CommandQL.Entities;
 using Microsoft.Web.WebSockets;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
@@ -39,8 +40,36 @@ namespace BAG.CommandQL.WebSocket
 
         public override void OnMessage(string message)
         {
-            JObject json = new JObject(message);
-            var t = json["subscribe"];
+            JToken json = JToken.Parse(message);
+            string type = json.Value<String>("type");
+
+            if (type == "execute")
+            {
+                CommandQLWebsocketExecuteRequest sendData = json.ToObject<CommandQLWebsocketExecuteRequest>();
+
+                if (sendData.Data.Data != null)
+                {
+                    CommandQLResponse response = new CommandQLExecuter(Context, CommandQL.CreateHandlerInstances(Context)).Execute(sendData.Data.Data);
+
+                    CommandQLWebsocketResponse wsResponse = new CommandQLWebsocketResponse()
+                    {
+                        Data = new CommandQLResponseSendData()
+                        {
+                            Id = sendData.Data.Id,
+                            Data = response
+                        },
+                        Type = "executeResult"
+                    };
+
+                    string result = JsonConvert.SerializeObject(wsResponse, CommandQL.serializerSettings);
+                    Send(result);
+                }
+
+                //CommandQLRequest request = sendData.Value<CommandQLRequest>("data");
+
+                //string request = sendData.Value<string>("data");
+            }
+
             //CommandQLWebSocketStorage.clients.Broadcast("Echo: " + message);
         }
 
